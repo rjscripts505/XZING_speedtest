@@ -3,27 +3,26 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>WiFi Speed Test</title>
+  <title>XZING Speed Test</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #0f0f13;
-      --card: #1a1a24;
-      --accent: #6366f1;
-      --accent-hover: #818cf8;
-      --text: #f1f5f9;
+      --bg: #05050a;
+      --card: rgba(18, 18, 28, 0.85);
+      --accent: #7c3aed;
+      --accent2: #06b6d4;
+      --accent-glow: rgba(124, 58, 237, 0.4);
+      --text: #f8fafc;
       --muted: #94a3b8;
-      --success: #22c55e;
-      --border: #2a2a3a;
+      --border: rgba(255, 255, 255, 0.08);
+      --ping: #f59e0b;
+      --download: #06b6d4;
+      --upload: #8b5cf6;
     }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+      font-family: 'Inter', system-ui, sans-serif;
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
@@ -32,167 +31,125 @@
       align-items: center;
       justify-content: center;
       padding: 24px;
+      overflow-x: hidden;
       background-image:
-        radial-gradient(ellipse at top, #1e1b4b 0%, transparent 50%),
-        radial-gradient(ellipse at bottom, #0f172a 0%, transparent 60%);
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(124, 58, 237, 0.25), transparent),
+        radial-gradient(ellipse 60% 40% at 80% 100%, rgba(6, 182, 212, 0.12), transparent),
+        radial-gradient(ellipse 50% 30% at 10% 80%, rgba(139, 92, 246, 0.1), transparent);
     }
-
-    .container {
-      width: 100%;
-      max-width: 480px;
-      text-align: center;
+    .container { width: 100%; max-width: 520px; text-align: center; position: relative; z-index: 1; }
+    .brand { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 8px; }
+    .logo {
+      width: 48px; height: 48px; border-radius: 14px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 1.3rem; color: white;
+      box-shadow: 0 0 30px var(--accent-glow); letter-spacing: -1px;
     }
-
     h1 {
-      font-size: 1.75rem;
-      font-weight: 700;
-      margin-bottom: 8px;
-      letter-spacing: -0.02em;
+      font-size: 1.9rem; font-weight: 800; letter-spacing: -0.03em;
+      background: linear-gradient(135deg, #fff 30%, #a78bfa);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
     }
-
-    .subtitle {
-      color: var(--muted);
-      font-size: 0.95rem;
-      margin-bottom: 36px;
-    }
-
+    .subtitle { color: var(--muted); font-size: 0.95rem; margin-bottom: 32px; font-weight: 500; }
     .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 32px 28px;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      background: var(--card); border: 1px solid var(--border); border-radius: 24px;
+      padding: 32px 28px; backdrop-filter: blur(20px);
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.05);
     }
-
-    .metrics {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 16px;
-      margin-bottom: 28px;
-    }
-
-    .metric {
-      background: rgba(255, 255, 255, 0.03);
-      border-radius: 14px;
-      padding: 16px 8px;
-      border: 1px solid var(--border);
-    }
-
-    .metric-label {
-      font-size: 0.75rem;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      margin-bottom: 6px;
-    }
-
-    .metric-value {
-      font-size: 1.4rem;
-      font-weight: 700;
-      font-variant-numeric: tabular-nums;
-    }
-
-    .metric-unit {
-      font-size: 0.7rem;
-      color: var(--muted);
-      font-weight: 500;
-    }
-
-    #status {
-      color: var(--muted);
-      font-size: 0.9rem;
-      min-height: 24px;
-      margin-bottom: 20px;
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      background: var(--accent);
-      color: white;
-      border: none;
-      border-radius: 12px;
-      padding: 14px 36px;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      width: 100%;
-      max-width: 260px;
-    }
-
-    .btn:hover:not(:disabled) {
-      background: var(--accent-hover);
-      transform: translateY(-1px);
-      box-shadow: 0 8px 20px rgba(99, 102, 241, 0.35);
-    }
-
-    .btn:disabled {
-      opacity: 0.55;
-      cursor: not-allowed;
-    }
-
-    .btn .spinner {
-      width: 18px;
-      height: 18px;
-      border: 2px solid rgba(255, 255, 255, 0.3);
-      border-top-color: white;
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-      display: none;
-    }
-
-    .btn.loading .spinner {
-      display: block;
-    }
-
-    .btn.loading .btn-text {
-      display: none;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    .footer {
-      margin-top: 28px;
-      font-size: 0.75rem;
-      color: var(--muted);
-    }
-
     .progress-wrap {
-      height: 4px;
-      background: var(--border);
-      border-radius: 2px;
-      margin-bottom: 24px;
-      overflow: hidden;
-      display: none;
+      height: 5px; background: rgba(255,255,255,0.06); border-radius: 10px;
+      margin-bottom: 28px; overflow: hidden; display: none;
     }
-
-    .progress-wrap.active {
-      display: block;
-    }
-
+    .progress-wrap.active { display: block; }
     .progress-bar {
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, var(--accent), #a78bfa);
-      border-radius: 2px;
-      transition: width 0.3s ease;
+      height: 100%; width: 0%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      border-radius: 10px; transition: width 0.35s ease;
+      box-shadow: 0 0 12px var(--accent-glow);
     }
+    .metrics { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 12px; }
+    .metric {
+      background: rgba(255,255,255,0.03); border-radius: 16px; padding: 18px 10px;
+      border: 1px solid var(--border); transition: transform 0.2s, border-color 0.2s;
+    }
+    .metric:hover { transform: translateY(-2px); border-color: rgba(255,255,255,0.15); }
+    .metric-label {
+      font-size: 0.7rem; color: var(--muted); text-transform: uppercase;
+      letter-spacing: 0.08em; margin-bottom: 8px; font-weight: 600;
+    }
+    .metric-value { font-size: 1.55rem; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1.1; }
+    .metric-unit { font-size: 0.7rem; color: var(--muted); font-weight: 500; margin-top: 2px; }
+    #ping { color: var(--ping); }
+    #download { color: var(--download); }
+    #upload { color: var(--upload); }
+    .extra-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 24px; }
+    .extra-metric {
+      background: rgba(255,255,255,0.02); border-radius: 12px; padding: 12px;
+      border: 1px solid var(--border);
+    }
+    .extra-metric .metric-label { margin-bottom: 4px; }
+    .extra-metric .metric-value { font-size: 1.15rem; color: var(--text); }
+    #status { color: var(--muted); font-size: 0.9rem; min-height: 24px; margin-bottom: 22px; font-weight: 500; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      background: linear-gradient(135deg, var(--accent), #5b21b6); color: white;
+      border: none; border-radius: 14px; padding: 16px 40px; font-size: 1.05rem;
+      font-weight: 600; cursor: pointer; transition: all 0.25s ease;
+      width: 100%; max-width: 280px; box-shadow: 0 8px 25px var(--accent-glow);
+      position: relative; overflow: hidden;
+    }
+    .btn::before {
+      content: ""; position: absolute; inset: 0;
+      background: linear-gradient(135deg, transparent, rgba(255,255,255,0.15), transparent);
+      transform: translateX(-100%); transition: transform 0.5s;
+    }
+    .btn:hover:not(:disabled)::before { transform: translateX(100%); }
+    .btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 12px 30px var(--accent-glow); }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .btn .spinner {
+      width: 20px; height: 20px; border: 2.5px solid rgba(255,255,255,0.3);
+      border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; display: none;
+    }
+    .btn.loading .spinner { display: block; }
+    .btn.loading .btn-text { display: none; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .live-speed {
+      font-size: 2.8rem; font-weight: 800; margin: 8px 0 4px;
+      background: linear-gradient(135deg, var(--download), var(--accent2));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      display: none; font-variant-numeric: tabular-nums;
+    }
+    .live-speed.active { display: block; }
+    .live-label { font-size: 0.8rem; color: var(--muted); display: none; margin-bottom: 16px; }
+    .live-label.active { display: block; }
+    .footer { margin-top: 28px; font-size: 0.78rem; color: var(--muted); }
+    .footer a { color: #a78bfa; text-decoration: none; font-weight: 600; }
+    .footer a:hover { text-decoration: underline; }
+    .share-btn {
+      margin-top: 16px; background: transparent; border: 1px solid var(--border);
+      color: var(--muted); padding: 10px 20px; border-radius: 10px; font-size: 0.85rem;
+      cursor: pointer; display: none; transition: all 0.2s;
+    }
+    .share-btn.show { display: inline-block; }
+    .share-btn:hover { border-color: var(--accent); color: var(--text); }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>WiFi Speed Test</h1>
-    <p class="subtitle">Test your download, upload &amp; ping in the browser</p>
+    <div class="brand">
+      <div class="logo">XZ</div>
+      <h1>XZING Speed</h1>
+    </div>
+    <p class="subtitle">Fast • Accurate • Free Internet Speed Test</p>
 
     <div class="card">
       <div class="progress-wrap" id="progressWrap">
         <div class="progress-bar" id="progressBar"></div>
       </div>
+
+      <div class="live-speed" id="liveSpeed">0.0</div>
+      <div class="live-label" id="liveLabel">Mbps</div>
 
       <div class="metrics">
         <div class="metric">
@@ -212,116 +169,147 @@
         </div>
       </div>
 
+      <div class="extra-metrics">
+        <div class="extra-metric">
+          <div class="metric-label">Jitter</div>
+          <div class="metric-value" id="jitter">—</div>
+          <div class="metric-unit">ms</div>
+        </div>
+        <div class="extra-metric">
+          <div class="metric-label">Server</div>
+          <div class="metric-value" id="server" style="font-size:0.95rem">Cloudflare</div>
+        </div>
+      </div>
+
       <div id="status">Ready when you are</div>
 
       <button class="btn" id="startBtn">
         <span class="spinner"></span>
         <span class="btn-text">Start Speed Test</span>
       </button>
+
+      <button class="share-btn" id="shareBtn">📋 Copy Results</button>
     </div>
 
     <p class="footer">
-      Powered by Cloudflare Speed Test API
+      Made by <a href="https://github.com/rjscripts505" target="_blank">XZING</a> · Powered by Cloudflare
     </p>
   </div>
 
-  <script type="module">
-    import SpeedTest from "https://cdn.skypack.dev/@cloudflare/speedtest";
-
+  <script>
     const startBtn = document.getElementById("startBtn");
     const statusEl = document.getElementById("status");
     const pingEl = document.getElementById("ping");
     const downloadEl = document.getElementById("download");
     const uploadEl = document.getElementById("upload");
+    const jitterEl = document.getElementById("jitter");
     const progressWrap = document.getElementById("progressWrap");
     const progressBar = document.getElementById("progressBar");
-
-    let engine = null;
-
-    function formatMbps(bps) {
-      if (!bps || bps <= 0) return "—";
-      return (bps / 1e6).toFixed(1);
-    }
-
-    function formatMs(ms) {
-      if (ms == null || isNaN(ms)) return "—";
-      return ms.toFixed(0);
-    }
+    const liveSpeed = document.getElementById("liveSpeed");
+    const liveLabel = document.getElementById("liveLabel");
+    const shareBtn = document.getElementById("shareBtn");
+    let lastResults = null;
 
     function setLoading(loading) {
       startBtn.disabled = loading;
       startBtn.classList.toggle("loading", loading);
       progressWrap.classList.toggle("active", loading);
+      liveSpeed.classList.toggle("active", loading);
+      liveLabel.classList.toggle("active", loading);
+      if (loading) shareBtn.classList.remove("show");
     }
-
     function updateProgress(pct) {
       progressBar.style.width = Math.min(100, Math.max(0, pct)) + "%";
     }
+    function setLive(speed) {
+      liveSpeed.textContent = speed.toFixed(1);
+    }
 
-    startBtn.addEventListener("click", () => {
-      // Reset UI
-      pingEl.textContent = "—";
-      downloadEl.textContent = "—";
-      uploadEl.textContent = "—";
-      statusEl.textContent = "Starting test...";
-      updateProgress(5);
-      setLoading(true);
+    async function testPing(count = 8) {
+      const times = [];
+      for (let i = 0; i < count; i++) {
+        const start = performance.now();
+        try {
+          await fetch("https://speed.cloudflare.com/__down?bytes=0", { cache: "no-store", mode: "cors" });
+          times.push(performance.now() - start);
+        } catch (e) {}
+        updateProgress(5 + (i + 1) * 2);
+      }
+      if (times.length < 2) return { ping: null, jitter: null };
+      times.sort((a, b) => a - b);
+      const ping = times[Math.floor(times.length / 2)];
+      let jitterSum = 0;
+      for (let i = 1; i < times.length; i++) jitterSum += Math.abs(times[i] - times[i - 1]);
+      return { ping, jitter: jitterSum / (times.length - 1) };
+    }
 
-      engine = new SpeedTest({ autoStart: false });
+    async function testDownload() {
+      const sizes = [1e6, 3e6, 8e6, 15e6];
+      let totalBytes = 0, totalTime = 0;
+      for (let i = 0; i < sizes.length; i++) {
+        const size = sizes[i];
+        const start = performance.now();
+        const res = await fetch(`https://speed.cloudflare.com/__down?bytes=${size}`, { cache: "no-store", mode: "cors" });
+        const blob = await res.blob();
+        const duration = (performance.now() - start) / 1000;
+        totalBytes += blob.size; totalTime += duration;
+        setLive((blob.size * 8 / duration) / 1e6);
+        updateProgress(25 + (i + 1) * 12);
+      }
+      return (totalBytes * 8 / totalTime) / 1e6;
+    }
 
-      let step = 0;
-      const totalSteps = 8;
+    async function testUpload() {
+      const sizes = [4e5, 1e6, 2.5e6];
+      let totalBytes = 0, totalTime = 0;
+      for (let i = 0; i < sizes.length; i++) {
+        const size = sizes[i];
+        const data = new Uint8Array(size);
+        crypto.getRandomValues(data);
+        const start = performance.now();
+        await fetch("https://speed.cloudflare.com/__up", { method: "POST", body: data, mode: "cors" });
+        const duration = (performance.now() - start) / 1000;
+        totalBytes += size; totalTime += duration;
+        setLive((size * 8 / duration) / 1e6);
+        updateProgress(75 + (i + 1) * 7);
+      }
+      return (totalBytes * 8 / totalTime) / 1e6;
+    }
 
-      engine.onRunningChange = (running) => {
-        if (!running && engine.isFinished) {
-          setLoading(false);
-          updateProgress(100);
-        }
-      };
+    startBtn.addEventListener("click", async () => {
+      pingEl.textContent = "—"; downloadEl.textContent = "—"; uploadEl.textContent = "—"; jitterEl.textContent = "—";
+      statusEl.textContent = "Starting test..."; updateProgress(3); setLive(0); setLoading(true);
+      try {
+        statusEl.textContent = "Measuring ping & jitter...";
+        const { ping, jitter } = await testPing();
+        if (ping != null) { pingEl.textContent = Math.round(ping); jitterEl.textContent = jitter.toFixed(1); }
 
-      engine.onResultsChange = ({ type }) => {
-        step++;
-        updateProgress(10 + (step / totalSteps) * 80);
+        statusEl.textContent = "Testing download speed..."; liveLabel.textContent = "Download Mbps";
+        const downloadMbps = await testDownload();
+        downloadEl.textContent = downloadMbps.toFixed(1);
 
-        const summary = engine.results.getSummary();
+        statusEl.textContent = "Testing upload speed..."; liveLabel.textContent = "Upload Mbps";
+        const uploadMbps = await testUpload();
+        uploadEl.textContent = uploadMbps.toFixed(1);
 
-        if (summary.latency != null) {
-          pingEl.textContent = formatMs(summary.latency);
-        }
-        if (summary.download) {
-          downloadEl.textContent = formatMbps(summary.download);
-        }
-        if (summary.upload) {
-          uploadEl.textContent = formatMbps(summary.upload);
-        }
-
-        const labels = {
-          latency: "Measuring ping...",
-          download: "Testing download speed...",
-          upload: "Testing upload speed...",
-          packetLoss: "Checking packet loss..."
-        };
-        statusEl.textContent = labels[type] || "Testing...";
-      };
-
-      engine.onFinish = (results) => {
-        const summary = results.getSummary();
-        pingEl.textContent = formatMs(summary.latency);
-        downloadEl.textContent = formatMbps(summary.download);
-        uploadEl.textContent = formatMbps(summary.upload);
-
-        statusEl.textContent = "Test complete!";
-        setLoading(false);
-        updateProgress(100);
-      };
-
-      engine.onError = (err) => {
+        updateProgress(100); statusEl.textContent = "Test complete!";
+        lastResults = { ping: Math.round(ping), download: downloadMbps.toFixed(1), upload: uploadMbps.toFixed(1), jitter: jitter.toFixed(1) };
+        shareBtn.classList.add("show");
+      } catch (err) {
         console.error(err);
-        statusEl.textContent = "Error: " + (err.message || "Something went wrong");
-        setLoading(false);
-      };
+        statusEl.textContent = "Error: " + (err.message || "Check your connection");
+      } finally {
+        setLoading(false); liveSpeed.classList.remove("active"); liveLabel.classList.remove("active");
+      }
+    });
 
-      engine.play();
+    shareBtn.addEventListener("click", () => {
+      if (!lastResults) return;
+      const text = `XZING Speed Test Results\nPing: ${lastResults.ping} ms\nDownload: ${lastResults.download} Mbps\nUpload: ${lastResults.upload} Mbps\nJitter: ${lastResults.jitter} ms\nhttps://rjscripts505.github.io/XZING_speedtest/`;
+      navigator.clipboard.writeText(text).then(() => {
+        shareBtn.textContent = "✅ Copied!";
+        setTimeout(() => shareBtn.textContent = "📋 Copy Results", 2000);
+      });
     });
   </script>
 </body>
