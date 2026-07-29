@@ -4,14 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>XZING Speed Test</title>
-  <!-- XZ Favicon -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%237c3aed'/><text x='50' y='68' font-size='52' font-weight='800' font-family='Arial' text-anchor='middle' fill='white'>XZ</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg: #05050a;
-      --card: rgba(18, 18, 28, 0.85);
+      --card: rgba(18, 18, 28, 0.9);
       --accent: #7c3aed;
       --accent2: #06b6d4;
       --accent-glow: rgba(124, 58, 237, 0.4);
@@ -21,11 +20,12 @@
       --ping: #f59e0b;
       --download: #06b6d4;
       --upload: #8b5cf6;
-      --orb-opacity: 0.35;
+      --particle: rgba(167, 139, 250, 0.7);
+      --line: rgba(124, 58, 237, 0.25);
     }
     [data-theme="light"] {
       --bg: #f1f5f9;
-      --card: rgba(255, 255, 255, 0.85);
+      --card: rgba(255, 255, 255, 0.9);
       --accent: #7c3aed;
       --accent2: #0891b2;
       --accent-glow: rgba(124, 58, 237, 0.25);
@@ -35,7 +35,8 @@
       --ping: #d97706;
       --download: #0891b2;
       --upload: #7c3aed;
-      --orb-opacity: 0.2;
+      --particle: rgba(124, 58, 237, 0.5);
+      --line: rgba(124, 58, 237, 0.15);
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -52,30 +53,11 @@
       position: relative;
       transition: background 0.35s, color 0.35s;
     }
-    .bg-animation { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
-    .orb {
-      position: absolute; border-radius: 50%; filter: blur(80px);
-      opacity: var(--orb-opacity); animation: float 18s ease-in-out infinite; transition: opacity 0.35s;
-    }
-    .orb1 { width: 420px; height: 420px; background: #7c3aed; top: -120px; left: -80px; }
-    .orb2 { width: 350px; height: 350px; background: #06b6d4; bottom: -100px; right: -60px; animation-delay: -6s; animation-duration: 22s; }
-    .orb3 { width: 280px; height: 280px; background: #8b5cf6; top: 40%; left: 60%; animation-delay: -12s; animation-duration: 26s; opacity: calc(var(--orb-opacity) * 0.7); }
-    .orb4 { width: 200px; height: 200px; background: #06b6d4; top: 20%; right: 15%; animation-delay: -4s; animation-duration: 20s; opacity: calc(var(--orb-opacity) * 0.55); }
-    @keyframes float {
-      0%, 100% { transform: translate(0, 0) scale(1); }
-      25% { transform: translate(40px, -50px) scale(1.05); }
-      50% { transform: translate(-30px, 30px) scale(0.95); }
-      75% { transform: translate(20px, 40px) scale(1.02); }
-    }
-    .particle {
-      position: absolute; width: 3px; height: 3px; background: rgba(255,255,255,0.4);
-      border-radius: 50%; animation: rise linear infinite;
-    }
-    [data-theme="light"] .particle { background: rgba(0,0,0,0.15); }
-    @keyframes rise {
-      0% { transform: translateY(100vh) scale(0.5); opacity: 0; }
-      10% { opacity: 0.6; } 90% { opacity: 0.4; }
-      100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+    #networkCanvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
     }
     .theme-btn {
       position: fixed; top: 20px; right: 20px; z-index: 10;
@@ -115,13 +97,11 @@
     .net-info strong { color: var(--text); font-weight: 600; }
     .card {
       background: var(--card); border: 1px solid var(--border); border-radius: 24px;
-      padding: 32px 28px; backdrop-filter: blur(20px);
+      padding: 32px 28px; backdrop-filter: blur(16px);
       box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05);
       transition: background 0.35s, border-color 0.35s;
     }
     [data-theme="light"] .card { box-shadow: 0 25px 50px -12px rgba(0,0,0,0.1); }
-
-    /* Cooler progress bar */
     .progress-wrap {
       height: 8px; background: rgba(128,128,128,0.12); border-radius: 20px;
       margin-bottom: 28px; overflow: hidden; display: none; position: relative;
@@ -140,7 +120,6 @@
       0% { background-position: 200% 0; }
       100% { background-position: -200% 0; }
     }
-
     .metrics { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 12px; }
     .metric {
       background: rgba(128,128,128,0.06); border-radius: 16px; padding: 18px 10px;
@@ -187,8 +166,6 @@
     .btn.loading .spinner { display: block; }
     .btn.loading .btn-text { display: none; }
     @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* Cooler live speed */
     .live-speed {
       font-size: 3.2rem; font-weight: 800; margin: 8px 0 4px;
       background: linear-gradient(135deg, #06b6d4, #a78bfa, #7c3aed);
@@ -196,11 +173,8 @@
       -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
       display: none; font-variant-numeric: tabular-nums;
       animation: textShine 3s linear infinite;
-      text-shadow: 0 0 40px rgba(6, 182, 212, 0.3);
     }
-    @keyframes textShine {
-      to { background-position: 200% center; }
-    }
+    @keyframes textShine { to { background-position: 200% center; } }
     .live-speed.active { display: block; }
     .live-label { font-size: 0.85rem; color: var(--muted); display: none; margin-bottom: 16px; font-weight: 500; letter-spacing: 0.05em; }
     .live-label.active { display: block; }
@@ -209,14 +183,8 @@
   </style>
 </head>
 <body>
+  <canvas id="networkCanvas"></canvas>
   <button class="theme-btn" id="themeBtn" title="Toggle theme">🌙</button>
-
-  <div class="bg-animation">
-    <div class="orb orb1"></div>
-    <div class="orb orb2"></div>
-    <div class="orb orb3"></div>
-    <div class="orb orb4"></div>
-  </div>
 
   <div class="container">
     <div class="brand">
@@ -282,6 +250,91 @@
   </div>
 
   <script>
+    // ===== Particle Network =====
+    const canvas = document.getElementById('networkCanvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    let animationId;
+    // Auto-detect low-end / mobile and reduce load
+    const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) || window.innerWidth < 768;
+    const isLowEnd = isMobile || (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4);
+    const PARTICLE_COUNT = isLowEnd ? 22 : 50;
+    const CONNECT_DIST = isLowEnd ? 90 : 130;
+    const SPEED = isLowEnd ? 0.25 : 0.4;
+
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    function createParticles() {
+      particles = [];
+      for (let i = 0; i < PARTICLE_COUNT; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          vx: (Math.random() - 0.5) * SPEED,
+          vy: (Math.random() - 0.5) * SPEED,
+          r: isLowEnd ? 1.2 + Math.random() : 1.5 + Math.random() * 1.5
+        });
+      }
+    }
+    createParticles();
+
+    function getColors() {
+      const style = getComputedStyle(document.documentElement);
+      return {
+        particle: style.getPropertyValue('--particle').trim(),
+        line: style.getPropertyValue('--line').trim()
+      };
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const colors = getColors();
+
+      // Move particles
+      for (const p of particles) {
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+        if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+      }
+
+      // Draw connections
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const a = particles[i], b = particles[j];
+          const dx = a.x - b.x, dy = a.y - b.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < CONNECT_DIST) {
+            const alpha = 1 - dist / CONNECT_DIST;
+            ctx.beginPath();
+            ctx.strokeStyle = colors.line;
+            ctx.globalAlpha = alpha * 0.8;
+            ctx.lineWidth = 1;
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+            ctx.stroke();
+            ctx.globalAlpha = 1;
+          }
+        }
+      }
+
+      // Draw particles
+      for (const p of particles) {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = colors.particle;
+        ctx.fill();
+      }
+
+      animationId = requestAnimationFrame(draw);
+    }
+    draw();
+
     // Theme
     const themeBtn = document.getElementById('themeBtn');
     const saved = localStorage.getItem('theme') || 'dark';
@@ -293,20 +346,6 @@
       localStorage.setItem('theme', next);
       themeBtn.textContent = next === 'dark' ? '☀️' : '🌙';
     };
-
-    // Particles
-    (function() {
-      const box = document.querySelector('.bg-animation');
-      for (let i = 0; i < 18; i++) {
-        const p = document.createElement('div');
-        p.className = 'particle';
-        p.style.left = Math.random() * 100 + '%';
-        p.style.animationDuration = (8 + Math.random() * 12) + 's';
-        p.style.animationDelay = Math.random() * 10 + 's';
-        p.style.width = p.style.height = (1.5 + Math.random() * 2.5) + 'px';
-        box.appendChild(p);
-      }
-    })();
 
     function shortIsp(name) {
       if (!name) return 'Unknown';
