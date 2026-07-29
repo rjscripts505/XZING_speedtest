@@ -90,7 +90,17 @@
     }
     .extra-metric .metric-label { margin-bottom: 4px; }
     .extra-metric .metric-value { font-size: 1.15rem; color: var(--text); }
-    #status { color: var(--muted); font-size: 0.9rem; min-height: 24px; margin-bottom: 22px; font-weight: 500; }
+    #status {
+      color: var(--muted);
+      font-size: 1rem;
+      min-height: 28px;
+      margin-bottom: 22px;
+      font-weight: 600;
+      transition: color 0.3s;
+    }
+    #status.fast { color: #10b981; }
+    #status.average { color: #f59e0b; }
+    #status.slow { color: #ef4444; }
     .btn {
       display: inline-flex; align-items: center; justify-content: center; gap: 10px;
       background: linear-gradient(135deg, var(--accent), #5b21b6); color: white;
@@ -126,13 +136,6 @@
     .footer { margin-top: 28px; font-size: 0.78rem; color: var(--muted); }
     .footer a { color: #a78bfa; text-decoration: none; font-weight: 600; }
     .footer a:hover { text-decoration: underline; }
-    .share-btn {
-      margin-top: 16px; background: transparent; border: 1px solid var(--border);
-      color: var(--muted); padding: 10px 20px; border-radius: 10px; font-size: 0.85rem;
-      cursor: pointer; display: none; transition: all 0.2s;
-    }
-    .share-btn.show { display: inline-block; }
-    .share-btn:hover { border-color: var(--accent); color: var(--text); }
   </style>
 </head>
 <body>
@@ -187,8 +190,6 @@
         <span class="spinner"></span>
         <span class="btn-text">Start Speed Test</span>
       </button>
-
-      <button class="share-btn" id="shareBtn">📋 Copy Results</button>
     </div>
 
     <p class="footer">
@@ -207,8 +208,6 @@
     const progressBar = document.getElementById("progressBar");
     const liveSpeed = document.getElementById("liveSpeed");
     const liveLabel = document.getElementById("liveLabel");
-    const shareBtn = document.getElementById("shareBtn");
-    let lastResults = null;
 
     function setLoading(loading) {
       startBtn.disabled = loading;
@@ -216,13 +215,28 @@
       progressWrap.classList.toggle("active", loading);
       liveSpeed.classList.toggle("active", loading);
       liveLabel.classList.toggle("active", loading);
-      if (loading) shareBtn.classList.remove("show");
     }
+
     function updateProgress(pct) {
       progressBar.style.width = Math.min(100, Math.max(0, pct)) + "%";
     }
+
     function setLive(speed) {
       liveSpeed.textContent = speed.toFixed(1);
+    }
+
+    function showSpeedMessage(downloadMbps) {
+      statusEl.classList.remove("fast", "average", "slow");
+      if (downloadMbps >= 100) {
+        statusEl.textContent = "Your WiFi is fast ⚡";
+        statusEl.classList.add("fast");
+      } else if (downloadMbps >= 30) {
+        statusEl.textContent = "Your WiFi is average";
+        statusEl.classList.add("average");
+      } else {
+        statusEl.textContent = "Your WiFi is slow 🐢";
+        statusEl.classList.add("slow");
+      }
     }
 
     async function testPing(count = 8) {
@@ -249,10 +263,11 @@
       for (let i = 0; i < sizes.length; i++) {
         const size = sizes[i];
         const start = performance.now();
-        const res = await fetch(`https://speed.cloudflare.com/__down?bytes=${size}&t=${Date.now()}`, { cache: "no-store", mode: "cors" });
+        const res = await fetch("https://speed.cloudflare.com/__down?bytes=" + size + "&t=" + Date.now(), { cache: "no-store", mode: "cors" });
         const blob = await res.blob();
         const duration = (performance.now() - start) / 1000;
-        totalBytes += blob.size; totalTime += duration;
+        totalBytes += blob.size;
+        totalTime += duration;
         setLive((blob.size * 8 / duration) / 1e6);
         updateProgress(25 + (i + 1) * 12);
       }
@@ -266,14 +281,13 @@
         const size = sizes[i];
         const data = new Uint8Array(size);
         for (let offset = 0; offset < size; offset += 65536) {
-          crypto.getRandomValues(
-            data.subarray(offset, Math.min(offset + 65536, size))
-          );
+          crypto.getRandomValues(data.subarray(offset, Math.min(offset + 65536, size)));
         }
         const start = performance.now();
         await fetch("https://speed.cloudflare.com/__up", { method: "POST", body: data, mode: "cors" });
         const duration = (performance.now() - start) / 1000;
-        totalBytes += size; totalTime += duration;
+        totalBytes += size;
+        totalTime += duration;
         setLive((size * 8 / duration) / 1e6);
         updateProgress(75 + (i + 1) * 7);
       }
@@ -281,39 +295,46 @@
     }
 
     startBtn.addEventListener("click", async () => {
-      pingEl.textContent = "—"; downloadEl.textContent = "—"; uploadEl.textContent = "—"; jitterEl.textContent = "—";
-      statusEl.textContent = "Starting test..."; updateProgress(3); setLive(0); setLoading(true);
+      pingEl.textContent = "—";
+      downloadEl.textContent = "—";
+      uploadEl.textContent = "—";
+      jitterEl.textContent = "—";
+      statusEl.textContent = "Starting test...";
+      statusEl.classList.remove("fast", "average", "slow");
+      updateProgress(3);
+      setLive(0);
+      setLoading(true);
+
       try {
         statusEl.textContent = "Measuring ping & jitter...";
-        const { ping, jitter } = await testPing();
-        if (ping != null) { pingEl.textContent = Math.round(ping); jitterEl.textContent = jitter.toFixed(1); }
+        const result = await testPing();
+        if (result.ping != null) {
+          pingEl.textContent = Math.round(result.ping);
+          jitterEl.textContent = result.jitter.toFixed(1);
+        }
 
-        statusEl.textContent = "Testing download speed..."; liveLabel.textContent = "Download Mbps";
+        statusEl.textContent = "Testing download speed...";
+        liveLabel.textContent = "Download Mbps";
         const downloadMbps = await testDownload();
         downloadEl.textContent = downloadMbps.toFixed(1);
 
-        statusEl.textContent = "Testing upload speed..."; liveLabel.textContent = "Upload Mbps";
+        statusEl.textContent = "Testing upload speed...";
+        liveLabel.textContent = "Upload Mbps";
         const uploadMbps = await testUpload();
         uploadEl.textContent = uploadMbps.toFixed(1);
 
-        updateProgress(100); statusEl.textContent = "Test complete!";
-        lastResults = { ping: Math.round(ping), download: downloadMbps.toFixed(1), upload: uploadMbps.toFixed(1), jitter: jitter.toFixed(1) };
-        shareBtn.classList.add("show");
+        updateProgress(100);
+        showSpeedMessage(downloadMbps);
+
       } catch (err) {
         console.error(err);
         statusEl.textContent = "Error: " + (err.message || "Check your connection");
+        statusEl.classList.remove("fast", "average", "slow");
       } finally {
-        setLoading(false); liveSpeed.classList.remove("active"); liveLabel.classList.remove("active");
+        setLoading(false);
+        liveSpeed.classList.remove("active");
+        liveLabel.classList.remove("active");
       }
-    });
-
-    shareBtn.addEventListener("click", () => {
-      if (!lastResults) return;
-      const text = `XZING Speed Test Results\nPing: ${lastResults.ping} ms\nDownload: ${lastResults.download} Mbps\nUpload: ${lastResults.upload} Mbps\nJitter: ${lastResults.jitter} ms\nhttps://rjscripts505.github.io/XZING_speedtest/`;
-      navigator.clipboard.writeText(text).then(() => {
-        shareBtn.textContent = "✅ Copied!";
-        setTimeout(() => shareBtn.textContent = "📋 Copy Results", 2000);
-      });
     });
   </script>
 </body>
