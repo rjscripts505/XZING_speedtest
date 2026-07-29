@@ -228,7 +228,6 @@
     <div class="net-info">
       <span>IP: <strong id="ipAddr">...</strong></span>
       <span>ISP: <strong id="ispName">...</strong></span>
-      <span id="connTypeWrap">Network: <strong id="connType">...</strong></span>
     </div>
 
     <div class="card">
@@ -308,27 +307,6 @@
         box.appendChild(p);
       }
     })();
-
-    // Detect WiFi / Mobile / Ethernet
-    function detectConnection() {
-      const el = document.getElementById('connType');
-      const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-      if (conn) {
-        const type = (conn.type || '').toLowerCase();
-        const effective = (conn.effectiveType || '').toLowerCase();
-        if (type === 'wifi') el.textContent = 'WiFi';
-        else if (type === 'cellular') el.textContent = 'Mobile Data';
-        else if (type === 'ethernet') el.textContent = 'Ethernet';
-        else if (type === 'wimax') el.textContent = 'WiMAX';
-        else if (effective.includes('4g') || effective.includes('3g') || effective.includes('2g')) el.textContent = 'Mobile Data';
-        else if (type) el.textContent = type.charAt(0).toUpperCase() + type.slice(1);
-        else el.textContent = 'Unknown';
-      } else {
-        // Fallback: most desktop = WiFi/Ethernet, can't reliably tell
-        el.textContent = /Mobi|Android/i.test(navigator.userAgent) ? 'Mobile' : 'WiFi / Ethernet';
-      }
-    }
-    detectConnection();
 
     function shortIsp(name) {
       if (!name) return 'Unknown';
