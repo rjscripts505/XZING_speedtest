@@ -249,7 +249,7 @@
       for (let i = 0; i < sizes.length; i++) {
         const size = sizes[i];
         const start = performance.now();
-        const res = await fetch(`https://speed.cloudflare.com/__down?bytes=${size}`, { cache: "no-store", mode: "cors" });
+        const res = await fetch(`https://speed.cloudflare.com/__down?bytes=${size}&t=${Date.now()}`, { cache: "no-store", mode: "cors" });
         const blob = await res.blob();
         const duration = (performance.now() - start) / 1000;
         totalBytes += blob.size; totalTime += duration;
@@ -265,7 +265,11 @@
       for (let i = 0; i < sizes.length; i++) {
         const size = sizes[i];
         const data = new Uint8Array(size);
-        crypto.getRandomValues(data);
+        for (let offset = 0; offset < size; offset += 65536) {
+          crypto.getRandomValues(
+            data.subarray(offset, Math.min(offset + 65536, size))
+          );
+        }
         const start = performance.now();
         await fetch("https://speed.cloudflare.com/__up", { method: "POST", body: data, mode: "cors" });
         const duration = (performance.now() - start) / 1000;
