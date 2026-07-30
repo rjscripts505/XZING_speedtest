@@ -196,6 +196,12 @@ h1 {
   font-weight: 500;
   padding: 6px 8px;
   border-radius: 10px;
+  opacity: 0;
+  transform: translateY(10px);
+  animation: itemIn 0.35s ease forwards;
+}
+@keyframes itemIn {
+  to { opacity: 1; transform: translateY(0); }
 }
 .can-do-item.yes { color: #10b981; background: rgba(16, 185, 129, 0.08); }
 .can-do-item.warn { color: #f59e0b; background: rgba(245, 158, 11, 0.08); }

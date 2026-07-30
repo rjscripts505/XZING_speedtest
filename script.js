@@ -158,8 +158,8 @@ function showMsg(mbps) {
 }
 
 function showCanDo(downloadMbps, uploadMbps, ping) {
-  // Show loading first
   canDo.classList.remove('show');
+  canDoList.innerHTML = '';
   canDoLoading.classList.add('show');
 
   const items = [
@@ -170,18 +170,24 @@ function showCanDo(downloadMbps, uploadMbps, ping) {
     { name: 'Large file downloads', ok: downloadMbps >= 50, warn: downloadMbps >= 20 }
   ];
 
-  // After short delay, hide loading and show results
+  // Short loading, then staggered one-by-one reveal
   setTimeout(() => {
-    canDoList.innerHTML = items.map(item => {
+    canDoLoading.classList.remove('show');
+    canDo.classList.add('show');
+
+    items.forEach((item, index) => {
       let cls, icon;
       if (item.ok) { cls = 'yes'; icon = '✅'; }
       else if (item.warn) { cls = 'warn'; icon = '⚠️'; }
       else { cls = 'no'; icon = '❌'; }
-      return `<div class="can-do-item ${cls}"><span class="can-do-icon">${icon}</span><span>${item.name}</span></div>`;
-    }).join('');
-    canDoLoading.classList.remove('show');
-    canDo.classList.add('show');
-  }, 1200);
+
+      const div = document.createElement('div');
+      div.className = 'can-do-item ' + cls;
+      div.style.animationDelay = (index * 0.18) + 's';
+      div.innerHTML = '<span class="can-do-icon">' + icon + '</span><span>' + item.name + '</span>';
+      canDoList.appendChild(div);
+    });
+  }, 500);
 }
 
 async function testPing(count=8) {
