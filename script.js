@@ -20,7 +20,15 @@
         hd: 'HD streaming (1080p)',
         uhd: '4K Netflix / YouTube',
         large: 'Large file downloads',
-        error: 'Error: Check your connection'
+        error: 'Error: Check your connection',
+        share: 'Share Results',
+        shared: 'Copied!',
+        history: 'Recent tests',
+        tipsTitle: 'Tips to improve',
+        tip1: 'Move closer to your router',
+        tip2: 'Pause downloads / streaming on other devices',
+        tip3: 'Use 5GHz WiFi if available',
+        tip4: 'Restart your router'
       },
       fil: {
         subtitle: 'Mabilis • Tumpak • Libreng Internet Speed Test',
@@ -42,7 +50,15 @@
         hd: 'HD streaming (1080p)',
         uhd: '4K Netflix / YouTube',
         large: 'Malalaking file downloads',
-        error: 'Error: Suriin ang connection mo'
+        error: 'Error: Suriin ang connection mo',
+        share: 'I-share ang Resulta',
+        shared: 'Nakopya!',
+        history: 'Mga kamakailang test',
+        tipsTitle: 'Mga tip para mapabilis',
+        tip1: 'Lumapit sa router',
+        tip2: 'I-pause ang downloads sa ibang device',
+        tip3: 'Gamitin ang 5GHz WiFi kung meron',
+        tip4: 'I-restart ang router'
       }
     };
 
@@ -327,6 +343,10 @@
     const canDo = document.getElementById('canDo');
     const canDoList = document.getElementById('canDoList');
     const canDoLoading = document.getElementById('canDoLoading');
+    const shareBtn = document.getElementById('shareBtn');
+    const tipsBox = document.getElementById('tipsBox');
+    const historyBox = document.getElementById('historyBox');
+    const historyList = document.getElementById('historyList');
 
     function setLoading(v) {
       startBtn.disabled = v;
@@ -334,7 +354,7 @@
       progressWrap.classList.toggle('active', v);
       liveSpeed.classList.toggle('active', v);
       liveLabel.classList.toggle('active', v);
-      if (v) { canDo.classList.remove('show'); canDoLoading.classList.remove('show'); }
+      if (v) { canDo.classList.remove('show'); canDoLoading.classList.remove('show'); if (shareBtn) shareBtn.style.display = 'none'; if (tipsBox) tipsBox.classList.remove('show'); }
     }
     function updateProgress(p) { progressBar.style.width = Math.min(100, p) + '%'; }
     function setLive(s) { liveSpeed.textContent = s.toFixed(1); }
@@ -366,6 +386,68 @@
         div.innerHTML = '<span class="can-do-icon">' + icon + '</span><span>' + t(item.key) + '</span>';
         canDoList.appendChild(div);
       });
+    }
+
+
+    function loadHistory() {
+      try {
+        const raw = localStorage.getItem('xzing_history');
+        return raw ? JSON.parse(raw) : [];
+      } catch(e) { return []; }
+    }
+
+    function saveHistory(entry) {
+      const list = loadHistory();
+      list.unshift(entry);
+      localStorage.setItem('xzing_history', JSON.stringify(list.slice(0, 5)));
+      renderHistory();
+    }
+
+    function renderHistory() {
+      const list = loadHistory();
+      if (!list.length) {
+        historyBox.classList.remove('show');
+        return;
+      }
+      historyBox.classList.add('show');
+      historyList.innerHTML = list.map(item => {
+        const d = new Date(item.time);
+        const when = d.toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+        return '<div class="history-item"><span class="h-speed">' + item.dl + ' Mbps</span><span class="h-meta">' + when + ' · ↑' + item.ul + ' · ' + item.ping + 'ms</span></div>';
+      }).join('');
+    }
+
+    function showTips(dl) {
+      if (dl >= 100) {
+        tipsBox.classList.remove('show');
+        return;
+      }
+      tipsBox.innerHTML = '<strong>' + t('tipsTitle') + '</strong>' +
+        '• ' + t('tip1') + '<br>' +
+        '• ' + t('tip2') + '<br>' +
+        '• ' + t('tip3') + '<br>' +
+        '• ' + t('tip4');
+      tipsBox.classList.add('show');
+    }
+
+    function setupShare(dl, ul, ping, jitter) {
+      shareBtn.style.display = 'inline-flex';
+      shareBtn.onclick = () => {
+        const text = 'XZING Speed Test Results\n' +
+          'Ping: ' + Math.round(ping || 0) + ' ms\n' +
+          'Download: ' + dl.toFixed(1) + ' Mbps\n' +
+          'Upload: ' + ul.toFixed(1) + ' Mbps\n' +
+          (jitter != null ? 'Jitter: ' + Number(jitter).toFixed(1) + ' ms\n' : '') +
+          'https://xzing-speedtest.wasmer.app/';
+        navigator.clipboard.writeText(text).then(() => {
+          const label = shareBtn.querySelector('[data-i18n]') || shareBtn;
+          const old = label.textContent;
+          label.textContent = t('shared');
+          setTimeout(() => { label.textContent = t('share'); }, 1600);
+        }).catch(() => {
+          prompt('Copy results:', text);
+        });
+      };
     }
 
     function showCanDo(downloadMbps, uploadMbps, ping) {
@@ -440,9 +522,19 @@
         const ul = await testUpload(); uploadEl.textContent = ul.toFixed(1);
         updateProgress(100); showMsg(dl);
         showCanDo(dl, ul, r.ping);
+        showTips(dl);
+        setupShare(dl, ul, r.ping, r.jitter);
+        saveHistory({
+          dl: dl.toFixed(1),
+          ul: ul.toFixed(1),
+          ping: r.ping != null ? Math.round(r.ping) : '—',
+          time: Date.now()
+        });
       } catch(err) {
         statusEl.textContent = t('error');
       } finally {
         setLoading(false); liveSpeed.classList.remove('active'); liveLabel.classList.remove('active');
       }
     };
+
+    renderHistory();
