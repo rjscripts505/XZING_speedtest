@@ -1,247 +1,252 @@
-:root {
-  --bg: #05050a;
-  --card: rgba(18, 18, 28, 0.9);
-  --accent: #7c3aed;
-  --accent2: #06b6d4;
-  --accent-glow: rgba(124, 58, 237, 0.4);
-  --text: #f8fafc;
-  --muted: #94a3b8;
-  --border: rgba(255, 255, 255, 0.08);
-  --ping: #f59e0b;
-  --download: #06b6d4;
-  --upload: #8b5cf6;
-  --particle: rgba(167, 139, 250, 0.7);
-  --line: rgba(124, 58, 237, 0.25);
-}
-[data-theme="light"] {
-  --bg: #f1f5f9;
-  --card: rgba(255, 255, 255, 0.9);
-  --accent: #7c3aed;
-  --accent2: #0891b2;
-  --accent-glow: rgba(124, 58, 237, 0.25);
-  --text: #0f172a;
-  --muted: #64748b;
-  --border: rgba(0, 0, 0, 0.08);
-  --ping: #d97706;
-  --download: #0891b2;
-  --upload: #7c3aed;
-  --particle: rgba(124, 58, 237, 0.5);
-  --line: rgba(124, 58, 237, 0.15);
-}
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body {
-  font-family: 'Inter', system-ui, sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  overflow-x: hidden;
-  position: relative;
-  transition: background 0.35s, color 0.35s;
-}
-#networkCanvas {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-}
-.theme-btn {
-  position: fixed; top: 20px; right: 20px; z-index: 10;
-  width: 44px; height: 44px; border-radius: 50%;
-  border: 1px solid var(--border); background: var(--card); color: var(--text);
-  font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center;
-  backdrop-filter: blur(12px); transition: all 0.25s; box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-}
-.theme-btn:hover { transform: scale(1.08); border-color: var(--accent); }
-.container { width: 100%; max-width: 520px; text-align: center; position: relative; z-index: 1; }
-.brand { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 8px; }
-.logo {
-  width: 48px; height: 48px; border-radius: 14px;
-  background: linear-gradient(135deg, var(--accent), var(--accent2));
-  display: flex; align-items: center; justify-content: center;
-  font-weight: 800; font-size: 1.3rem; color: white;
-  box-shadow: 0 0 30px var(--accent-glow); letter-spacing: -1px;
-}
-h1 {
-  font-size: 1.9rem; font-weight: 800; letter-spacing: -0.03em;
-  background: linear-gradient(135deg, var(--text) 30%, #a78bfa);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-}
-[data-theme="light"] h1 {
-  background: linear-gradient(135deg, #0f172a 30%, #7c3aed);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-}
-.subtitle { color: var(--muted); font-size: 0.95rem; margin-bottom: 24px; font-weight: 500; }
-.net-info {
-  display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 18px;
-  margin-bottom: 28px; font-size: 0.8rem; color: var(--muted);
-}
-.net-info span {
-  background: rgba(128,128,128,0.08); border: 1px solid var(--border);
-  border-radius: 20px; padding: 6px 14px; display: inline-flex; align-items: center; gap: 6px;
-}
-.net-info strong { color: var(--text); font-weight: 600; }
-.card {
-  background: var(--card); border: 1px solid var(--border); border-radius: 24px;
-  padding: 32px 28px; backdrop-filter: blur(16px);
-  box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05);
-  transition: background 0.35s, border-color 0.35s;
-}
-[data-theme="light"] .card { box-shadow: 0 25px 50px -12px rgba(0,0,0,0.1); }
-.progress-wrap {
-  height: 8px; background: rgba(128,128,128,0.12); border-radius: 20px;
-  margin-bottom: 28px; overflow: hidden; display: none; position: relative;
-}
-.progress-wrap.active { display: block; }
-.progress-bar {
-  height: 100%; width: 0%;
-  background: linear-gradient(90deg, #7c3aed, #06b6d4, #a78bfa, #7c3aed);
-  background-size: 200% 100%;
-  border-radius: 20px;
-  transition: width 0.35s ease;
-  box-shadow: 0 0 16px rgba(124, 58, 237, 0.6), 0 0 32px rgba(6, 182, 212, 0.3);
-  animation: shimmer 2s linear infinite;
-}
-@keyframes shimmer {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
-}
-.metrics { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 12px; }
-.metric {
-  background: rgba(128,128,128,0.06); border-radius: 16px; padding: 18px 10px;
-  border: 1px solid var(--border); transition: transform 0.2s;
-}
-.metric:hover { transform: translateY(-2px); }
-.metric-label {
-  font-size: 0.7rem; color: var(--muted); text-transform: uppercase;
-  letter-spacing: 0.08em; margin-bottom: 8px; font-weight: 600;
-}
-.metric-value { font-size: 1.55rem; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1.1; }
-.metric-unit { font-size: 0.7rem; color: var(--muted); font-weight: 500; margin-top: 2px; }
-#ping { color: var(--ping); }
-#download { color: var(--download); }
-#upload { color: var(--upload); }
-.extra-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 24px; }
-.extra-metric {
-  background: rgba(128,128,128,0.04); border-radius: 12px; padding: 12px;
-  border: 1px solid var(--border);
-}
-.extra-metric .metric-label { margin-bottom: 4px; }
-.extra-metric .metric-value { font-size: 1.15rem; color: var(--text); }
-#status {
-  color: var(--muted); font-size: 1rem; min-height: 28px;
-  margin-bottom: 22px; font-weight: 600; transition: color 0.3s;
-}
-#status.fast { color: #10b981; }
-#status.average { color: #f59e0b; }
-#status.slow { color: #ef4444; }
-.btn {
-  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
-  background: linear-gradient(135deg, var(--accent), #5b21b6); color: white;
-  border: none; border-radius: 14px; padding: 16px 40px; font-size: 1.05rem;
-  font-weight: 600; cursor: pointer; transition: all 0.25s ease;
-  width: 100%; max-width: 280px; box-shadow: 0 8px 25px var(--accent-glow);
-  position: relative; overflow: hidden;
-}
-.btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 12px 30px var(--accent-glow); }
-.btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-.btn .spinner {
-  width: 20px; height: 20px; border: 2.5px solid rgba(255,255,255,0.3);
-  border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; display: none;
-}
-.btn.loading .spinner { display: block; }
-.btn.loading .btn-text { display: none; }
-@keyframes spin { to { transform: rotate(360deg); } }
-.live-speed {
-  font-size: 3.2rem; font-weight: 800; margin: 8px 0 4px;
-  background: linear-gradient(135deg, #06b6d4, #a78bfa, #7c3aed);
-  background-size: 200% auto;
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-  display: none; font-variant-numeric: tabular-nums;
-  animation: textShine 3s linear infinite;
-}
-@keyframes textShine { to { background-position: 200% center; } }
-.live-speed.active { display: block; }
-.live-label { font-size: 0.85rem; color: var(--muted); display: none; margin-bottom: 16px; font-weight: 500; letter-spacing: 0.05em; }
-.live-label.active { display: block; }
-.can-do {
-  display: none;
-  margin-top: 20px;
-  text-align: left;
-  background: rgba(128,128,128,0.05);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 16px 18px;
-}
-.can-do.show { display: block; }
-.can-do-title {
-  font-size: 0.8rem;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  font-weight: 600;
-  margin-bottom: 12px;
-  text-align: center;
-}
-.can-do-list { display: grid; gap: 8px; }
-.can-do-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 0.9rem;
-  font-weight: 500;
-  padding: 6px 8px;
-  border-radius: 10px;
-}
-.can-do-item.yes { color: #10b981; background: rgba(16, 185, 129, 0.08); }
-.can-do-item.warn { color: #f59e0b; background: rgba(245, 158, 11, 0.08); }
-.can-do-item.no { color: #ef4444; background: rgba(239, 68, 68, 0.08); }
-.can-do-icon { font-size: 1rem; width: 22px; text-align: center; }
-.footer { margin-top: 28px; font-size: 0.78rem; color: var(--muted); }
-.footer a { color: #a78bfa; text-decoration: none; font-weight: 600; }
+// ===== Particle Network =====
+const canvas = document.getElementById('networkCanvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) || window.innerWidth < 768;
+const isLowEnd = isMobile || (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4);
+const PARTICLE_COUNT = isLowEnd ? 22 : 50;
+const CONNECT_DIST = isLowEnd ? 90 : 130;
+const SPEED = isLowEnd ? 0.25 : 0.4;
 
-.can-do-loading {
-  display: none;
-  margin-top: 20px;
-  text-align: center;
-  padding: 20px 16px;
-  background: rgba(128,128,128,0.05);
-  border: 1px solid var(--border);
-  border-radius: 16px;
+function resize() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
 }
-.can-do-loading.show { display: block; }
-.can-do-loading-text {
-  font-size: 0.85rem;
-  color: var(--muted);
-  margin-bottom: 14px;
-  font-weight: 500;
+window.addEventListener('resize', resize);
+resize();
+
+function createParticles() {
+  particles = [];
+  for (let i = 0; i < PARTICLE_COUNT; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      vx: (Math.random() - 0.5) * SPEED,
+      vy: (Math.random() - 0.5) * SPEED,
+      r: isLowEnd ? 1.2 + Math.random() : 1.5 + Math.random() * 1.5
+    });
+  }
 }
-.can-do-dots {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
+createParticles();
+
+function getColors() {
+  const style = getComputedStyle(document.documentElement);
+  return {
+    particle: style.getPropertyValue('--particle').trim(),
+    line: style.getPropertyValue('--line').trim()
+  };
 }
-.can-do-dots span {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--accent);
-  animation: bounceDot 1.2s ease-in-out infinite;
+
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  const colors = getColors();
+  for (const p of particles) {
+    p.x += p.vx;
+    p.y += p.vy;
+    if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+    if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+  }
+  for (let i = 0; i < particles.length; i++) {
+    for (let j = i + 1; j < particles.length; j++) {
+      const a = particles[i], b = particles[j];
+      const dx = a.x - b.x, dy = a.y - b.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < CONNECT_DIST) {
+        const alpha = 1 - dist / CONNECT_DIST;
+        ctx.beginPath();
+        ctx.strokeStyle = colors.line;
+        ctx.globalAlpha = alpha * 0.8;
+        ctx.lineWidth = 1;
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+      }
+    }
+  }
+  for (const p of particles) {
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = colors.particle;
+    ctx.fill();
+  }
+  requestAnimationFrame(draw);
 }
-.can-do-dots span:nth-child(2) { animation-delay: 0.15s; }
-.can-do-dots span:nth-child(3) { animation-delay: 0.3s; }
-@keyframes bounceDot {
-  0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
-  40% { transform: scale(1.2); opacity: 1; }
+draw();
+
+// Theme
+const themeBtn = document.getElementById('themeBtn');
+const saved = localStorage.getItem('theme') || 'dark';
+document.documentElement.setAttribute('data-theme', saved);
+themeBtn.textContent = saved === 'dark' ? '☀️' : '🌙';
+themeBtn.onclick = () => {
+  const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+  themeBtn.textContent = next === 'dark' ? '☀️' : '🌙';
+};
+
+function shortIsp(name) {
+  if (!name) return 'Unknown';
+  const n = name.toLowerCase();
+  if (n.includes('philippine long distance') || n.includes('pldt')) return 'PLDT';
+  if (n.includes('smart')) return 'Smart';
+  if (n.includes('globe')) return 'Globe';
+  if (n.includes('converge')) return 'Converge';
+  if (n.includes('dito')) return 'DITO';
+  if (n.includes('sky')) return 'Sky Fiber';
+  if (n.includes('radius')) return 'Radius';
+  if (name.length > 28) return name.split(/[ ,]+/).slice(0, 2).join(' ');
+  return name;
 }
-.can-do {
-  animation: fadeSlideIn 0.45s ease;
+
+async function loadNetworkInfo() {
+  try {
+    const res = await fetch('https://ipapi.co/json/');
+    const data = await res.json();
+    let ip = data.ip || '—';
+    let isp = data.org || data.asn || null;
+    try {
+      const res2 = await fetch('https://ipwho.is/');
+      const d2 = await res2.json();
+      if (d2.success !== false) {
+        if (d2.ip) ip = d2.ip;
+        if (d2.connection && d2.connection.isp) isp = d2.connection.isp;
+        else if (d2.isp) isp = d2.isp;
+        else if (d2.org) isp = d2.org;
+      }
+    } catch(e) {}
+    document.getElementById('ipAddr').textContent = ip;
+    document.getElementById('ispName').textContent = shortIsp(isp);
+  } catch(e) {
+    document.getElementById('ipAddr').textContent = '—';
+    document.getElementById('ispName').textContent = '—';
+  }
 }
-@keyframes fadeSlideIn {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
+loadNetworkInfo();
+
+const startBtn = document.getElementById('startBtn');
+const statusEl = document.getElementById('status');
+const pingEl = document.getElementById('ping');
+const downloadEl = document.getElementById('download');
+const uploadEl = document.getElementById('upload');
+const jitterEl = document.getElementById('jitter');
+const progressWrap = document.getElementById('progressWrap');
+const progressBar = document.getElementById('progressBar');
+const liveSpeed = document.getElementById('liveSpeed');
+const liveLabel = document.getElementById('liveLabel');
+const canDo = document.getElementById('canDo');
+const canDoLoading = document.getElementById('canDoLoading');
+const canDoList = document.getElementById('canDoList');
+
+function setLoading(v) {
+  startBtn.disabled = v;
+  startBtn.classList.toggle('loading', v);
+  progressWrap.classList.toggle('active', v);
+  liveSpeed.classList.toggle('active', v);
+  liveLabel.classList.toggle('active', v);
+  if (v) { canDo.classList.remove('show'); canDoLoading.classList.remove('show'); }
 }
+function updateProgress(p) { progressBar.style.width = Math.min(100, p) + '%'; }
+function setLive(s) { liveSpeed.textContent = s.toFixed(1); }
+
+function showMsg(mbps) {
+  statusEl.classList.remove('fast','average','slow');
+  if (mbps >= 100) { statusEl.textContent = 'Your WiFi is fast ⚡'; statusEl.classList.add('fast'); }
+  else if (mbps >= 30) { statusEl.textContent = 'Your WiFi is average'; statusEl.classList.add('average'); }
+  else { statusEl.textContent = 'Your WiFi is slow 🐢'; statusEl.classList.add('slow'); }
+}
+
+function showCanDo(downloadMbps, uploadMbps, ping) {
+  // Show loading first
+  canDo.classList.remove('show');
+  canDoLoading.classList.add('show');
+
+  const items = [
+    { name: 'Zoom / Video calls', ok: downloadMbps >= 3 && uploadMbps >= 3, warn: downloadMbps >= 1.5 },
+    { name: 'Online gaming', ok: downloadMbps >= 10 && (ping == null || ping <= 80), warn: downloadMbps >= 5 },
+    { name: 'HD streaming (1080p)', ok: downloadMbps >= 8, warn: downloadMbps >= 5 },
+    { name: '4K Netflix / YouTube', ok: downloadMbps >= 25, warn: downloadMbps >= 15 },
+    { name: 'Large file downloads', ok: downloadMbps >= 50, warn: downloadMbps >= 20 }
+  ];
+
+  // After short delay, hide loading and show results
+  setTimeout(() => {
+    canDoList.innerHTML = items.map(item => {
+      let cls, icon;
+      if (item.ok) { cls = 'yes'; icon = '✅'; }
+      else if (item.warn) { cls = 'warn'; icon = '⚠️'; }
+      else { cls = 'no'; icon = '❌'; }
+      return `<div class="can-do-item ${cls}"><span class="can-do-icon">${icon}</span><span>${item.name}</span></div>`;
+    }).join('');
+    canDoLoading.classList.remove('show');
+    canDo.classList.add('show');
+  }, 1200);
+}
+
+async function testPing(count=8) {
+  const times = [];
+  for (let i=0; i<count; i++) {
+    const t0 = performance.now();
+    try { await fetch('https://speed.cloudflare.com/__down?bytes=0', {cache:'no-store', mode:'cors'}); times.push(performance.now()-t0); } catch(e){}
+    updateProgress(5+(i+1)*2);
+  }
+  if (times.length < 2) return {ping:null, jitter:null};
+  times.sort((a,b)=>a-b);
+  const ping = times[Math.floor(times.length/2)];
+  let j=0; for (let i=1;i<times.length;i++) j += Math.abs(times[i]-times[i-1]);
+  return {ping, jitter: j/(times.length-1)};
+}
+
+async function testDownload() {
+  const sizes = [1e6,3e6,8e6,15e6];
+  let bytes=0, time=0;
+  for (let i=0;i<sizes.length;i++) {
+    const t0 = performance.now();
+    const res = await fetch('https://speed.cloudflare.com/__down?bytes='+sizes[i]+'&t='+Date.now(), {cache:'no-store', mode:'cors'});
+    const blob = await res.blob();
+    const d = (performance.now()-t0)/1000;
+    bytes += blob.size; time += d;
+    setLive((blob.size*8/d)/1e6);
+    updateProgress(25+(i+1)*12);
+  }
+  return (bytes*8/time)/1e6;
+}
+
+async function testUpload() {
+  const sizes = [4e5,1e6,2.5e6];
+  let bytes=0, time=0;
+  for (let i=0;i<sizes.length;i++) {
+    const data = new Uint8Array(sizes[i]);
+    for (let o=0; o<sizes[i]; o+=65536) crypto.getRandomValues(data.subarray(o, Math.min(o+65536, sizes[i])));
+    const t0 = performance.now();
+    await fetch('https://speed.cloudflare.com/__up', {method:'POST', body:data, mode:'cors'});
+    const d = (performance.now()-t0)/1000;
+    bytes += sizes[i]; time += d;
+    setLive((sizes[i]*8/d)/1e6);
+    updateProgress(75+(i+1)*7);
+  }
+  return (bytes*8/time)/1e6;
+}
+
+startBtn.onclick = async () => {
+  pingEl.textContent = downloadEl.textContent = uploadEl.textContent = jitterEl.textContent = '—';
+  statusEl.textContent = 'Starting test...';
+  statusEl.classList.remove('fast','average','slow');
+  updateProgress(3); setLive(0); setLoading(true);
+  try {
+    statusEl.textContent = 'Measuring ping & jitter...';
+    const r = await testPing();
+    if (r.ping != null) { pingEl.textContent = Math.round(r.ping); jitterEl.textContent = r.jitter.toFixed(1); }
+    statusEl.textContent = 'Testing download speed...'; liveLabel.textContent = 'Download Mbps';
+    const dl = await testDownload(); downloadEl.textContent = dl.toFixed(1);
+    statusEl.textContent = 'Testing upload speed...'; liveLabel.textContent = 'Upload Mbps';
+    const ul = await testUpload(); uploadEl.textContent = ul.toFixed(1);
+    updateProgress(100); showMsg(dl);
+    showCanDo(dl, ul, r.ping);
+  } catch(err) {
+    statusEl.textContent = 'Error: ' + (err.message || 'Check your connection');
+  } finally {
+    setLoading(false); liveSpeed.classList.remove('active'); liveLabel.classList.remove('active');
+  }
+};
