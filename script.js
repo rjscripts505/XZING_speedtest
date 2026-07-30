@@ -398,6 +398,17 @@
 
     function saveHistory(entry) {
       const list = loadHistory();
+      // Anti-spam: skip if last test was < 20 seconds ago
+      if (list.length && entry.time - list[0].time < 20000) {
+        return;
+      }
+      // Anti-spam: skip if same speeds as last test
+      if (list.length) {
+        const last = list[0];
+        if (last.dl === entry.dl && last.ul === entry.ul && last.ping === entry.ping) {
+          return;
+        }
+      }
       list.unshift(entry);
       localStorage.setItem('xzing_history', JSON.stringify(list.slice(0, 5)));
       renderHistory();
