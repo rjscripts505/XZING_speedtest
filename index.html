@@ -12,14 +12,36 @@
 </head>
 <body>
   <canvas id="networkCanvas"></canvas>
-  <button class="theme-btn" id="themeBtn" title="Toggle theme">🌙</button>
+
+  <div class="top-bar">
+    <div class="lang-dropdown" id="langDropdown">
+      <button class="lang-toggle" id="langToggle">
+        <span id="langCurrent">English</span>
+        <span class="lang-caret">▾</span>
+      </button>
+      <div class="lang-menu" id="langMenu">
+        <div class="lang-menu-title">Languages</div>
+        <div class="lang-grid">
+          <button data-lang="en" data-name="English">English</button>
+          <button data-lang="fil" data-name="Filipino">Filipino</button>
+          <button data-lang="id" data-name="Bahasa Indonesia">Bahasa Indonesia</button>
+          <button data-lang="es" data-name="Español">Español</button>
+          <button data-lang="ja" data-name="日本語">日本語</button>
+          <button data-lang="ko" data-name="한국어">한국어</button>
+          <button data-lang="zh" data-name="中文">中文</button>
+          <button data-lang="th" data-name="ไทย">ไทย</button>
+        </div>
+      </div>
+    </div>
+    <button class="theme-btn" id="themeBtn" title="Toggle theme">🌙</button>
+  </div>
 
   <div class="container">
     <div class="brand">
       <div class="logo">XZ</div>
       <h1>XZING Speed</h1>
     </div>
-    <p class="subtitle">Fast • Accurate • Free Internet Speed Test</p>
+    <p class="subtitle" data-i18n="subtitle">Fast • Accurate • Free Internet Speed Test</p>
 
     <div class="net-info">
       <span>IP: <strong id="ipAddr">...</strong></span>
@@ -36,17 +58,17 @@
 
       <div class="metrics">
         <div class="metric">
-          <div class="metric-label">Ping</div>
+          <div class="metric-label" data-i18n="ping">Ping</div>
           <div class="metric-value" id="ping">—</div>
           <div class="metric-unit">ms</div>
         </div>
         <div class="metric">
-          <div class="metric-label">Download</div>
+          <div class="metric-label" data-i18n="download">Download</div>
           <div class="metric-value" id="download">—</div>
           <div class="metric-unit">Mbps</div>
         </div>
         <div class="metric">
-          <div class="metric-label">Upload</div>
+          <div class="metric-label" data-i18n="upload">Upload</div>
           <div class="metric-value" id="upload">—</div>
           <div class="metric-unit">Mbps</div>
         </div>
@@ -54,32 +76,30 @@
 
       <div class="extra-metrics">
         <div class="extra-metric">
-          <div class="metric-label">Jitter</div>
+          <div class="metric-label" data-i18n="jitter">Jitter</div>
           <div class="metric-value" id="jitter">—</div>
           <div class="metric-unit">ms</div>
         </div>
         <div class="extra-metric">
-          <div class="metric-label">Server</div>
+          <div class="metric-label" data-i18n="server">Server</div>
           <div class="metric-value" style="font-size:0.95rem">Cloudflare</div>
         </div>
       </div>
 
-      <div id="status">Ready when you are</div>
+      <div id="status" data-i18n="ready">Ready when you are</div>
 
       <button class="btn" id="startBtn">
         <span class="spinner"></span>
-        <span class="btn-text">Start Speed Test</span>
+        <span class="btn-text" data-i18n="start">Start Speed Test</span>
       </button>
 
       <div class="can-do-loading" id="canDoLoading">
-        <div class="can-do-loading-text">Analyzing your speed...</div>
-        <div class="can-do-dots">
-          <span></span><span></span><span></span>
-        </div>
+        <div class="can-do-loading-text" data-i18n="analyzing">Analyzing your speed...</div>
+        <div class="can-do-dots"><span></span><span></span><span></span></div>
       </div>
 
       <div class="can-do" id="canDo">
-        <div class="can-do-title">What can you do with this speed?</div>
+        <div class="can-do-title" data-i18n="cando">What can you do with this speed?</div>
         <div class="can-do-list" id="canDoList"></div>
       </div>
     </div>
@@ -89,6 +109,10 @@
     </p>
   </div>
 
+  <div class="lang-loading-overlay" id="langLoading">
+    <div class="lang-loading-text">Loading...</div>
+    <div class="lang-loading-dots"><span></span><span></span><span></span></div>
+  </div>
   <script src="script.js"></script>
 </body>
 </html>
