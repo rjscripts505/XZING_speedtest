@@ -345,8 +345,11 @@
     const canDoLoading = document.getElementById('canDoLoading');
     const shareBtn = document.getElementById('shareBtn');
     const tipsBox = document.getElementById('tipsBox');
-    const historyBox = document.getElementById('historyBox');
+    const historyWrap = document.getElementById('historyWrap');
+    const historyToggle = document.getElementById('historyToggle');
+    const historyPanel = document.getElementById('historyPanel');
     const historyList = document.getElementById('historyList');
+    const historyArrow = document.getElementById('historyArrow');
 
     function setLoading(v) {
       startBtn.disabled = v;
@@ -411,23 +414,28 @@
       }
       list.unshift(entry);
       localStorage.setItem('xzing_history', JSON.stringify(list.slice(0, 5)));
-      renderHistory();
+  
+    if (historyToggle) {
+      historyToggle.onclick = () => {
+        historyWrap.classList.toggle('open');
+      };
+    }
+
+    renderHistory();
     }
 
     function renderHistory() {
-      if (!historyBox || !historyList) return;
+      if (!historyWrap || !historyList) return;
       const list = loadHistory();
       if (!list.length) {
-        historyBox.classList.remove('show');
-        historyBox.style.display = 'none';
+        historyWrap.style.display = 'none';
+        historyWrap.classList.remove('open');
         historyList.innerHTML = '';
         return;
       }
-      historyBox.style.display = 'block';
-      historyBox.classList.add('show');
-      // Ensure title text is translated
-      const titleEl = historyBox.querySelector('.history-title');
-      if (titleEl) titleEl.textContent = t('history');
+      historyWrap.style.display = 'block';
+      const titleSpan = historyToggle ? historyToggle.querySelector('[data-i18n]') : null;
+      if (titleSpan) titleSpan.textContent = t('history');
       historyList.innerHTML = list.map(item => {
         const d = new Date(item.time);
         const when = d.toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
@@ -554,5 +562,12 @@
         setLoading(false); liveSpeed.classList.remove('active'); liveLabel.classList.remove('active');
       }
     };
+
+
+    if (historyToggle) {
+      historyToggle.onclick = () => {
+        historyWrap.classList.toggle('open');
+      };
+    }
 
     renderHistory();

@@ -129,9 +129,14 @@
         <span data-i18n="share">Share Results</span>
       </button>
 
-      <div class="history-box" id="historyBox">
-        <div class="history-title" data-i18n="history">Recent tests</div>
-        <div class="history-list" id="historyList"></div>
+      <div class="history-wrap" id="historyWrap" style="display:none">
+        <button type="button" class="history-toggle" id="historyToggle">
+          <span data-i18n="history">Recent tests</span>
+          <span class="history-arrow" id="historyArrow">▾</span>
+        </button>
+        <div class="history-panel" id="historyPanel">
+          <div class="history-list" id="historyList"></div>
+        </div>
       </div>
     </div>
 
