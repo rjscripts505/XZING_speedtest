@@ -374,9 +374,9 @@
 .history-box {
   margin-top: 18px;
   text-align: left;
-  display: none;
+  display: none !important;
 }
-.history-box.show { display: block; }
+.history-box.show { display: block !important; }
 .history-title {
   font-size: 0.75rem;
   color: var(--muted);

@@ -415,12 +415,19 @@
     }
 
     function renderHistory() {
+      if (!historyBox || !historyList) return;
       const list = loadHistory();
       if (!list.length) {
         historyBox.classList.remove('show');
+        historyBox.style.display = 'none';
+        historyList.innerHTML = '';
         return;
       }
+      historyBox.style.display = 'block';
       historyBox.classList.add('show');
+      // Ensure title text is translated
+      const titleEl = historyBox.querySelector('.history-title');
+      if (titleEl) titleEl.textContent = t('history');
       historyList.innerHTML = list.map(item => {
         const d = new Date(item.time);
         const when = d.toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
