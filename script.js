@@ -37,7 +37,8 @@
         compareFaster: 'Faster than ~{n}% of PH users',
         compareSlower: 'Below typical PH home WiFi',
         compareAvg: 'Around typical PH home WiFi',
-        again: 'Test Again'
+        again: 'Test Again',
+        disclaimer: 'Results may vary from other speed tests (e.g. Ookla) due to different servers and methods.'
       },
       fil: {
         subtitle: 'Mabilis • Tumpak • Libreng Internet Speed Test',
@@ -76,7 +77,8 @@
         compareFaster: 'Mas mabilis kaysa ~{n}% ng users sa PH',
         compareSlower: 'Mas mababa sa typical PH home WiFi',
         compareAvg: 'Katulad ng typical PH home WiFi',
-        again: 'Test Ulit'
+        again: 'Test Ulit',
+        disclaimer: 'Maaaring mag-iba ang resulta sa ibang speed test (hal. Ookla) dahil sa iba't ibang server at paraan.'
       }
     };
 
