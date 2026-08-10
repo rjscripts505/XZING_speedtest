@@ -430,3 +430,30 @@
 }
 .history-item .h-speed { font-weight: 700; color: var(--download); }
 .history-item .h-meta { color: var(--muted); font-size: 0.75rem; }
+
+
+/* Server cities after test */
+.servers-line {
+  margin: 4px 0 18px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(128,128,128,0.05);
+  border: 1px solid var(--border);
+  font-size: 0.78rem;
+  color: var(--muted);
+  text-align: center;
+  line-height: 1.45;
+}
+.servers-line .servers-label {
+  display: block;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: var(--muted);
+}
+#serversList {
+  color: var(--text);
+  font-weight: 500;
+}

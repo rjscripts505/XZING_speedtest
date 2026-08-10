@@ -291,6 +291,47 @@
       themeBtn.textContent = next === 'dark' ? '☀️' : '🌙';
     };
 
+    
+    // Cloudflare colo -> city (common ones + PH region)
+    const COLO_MAP = {
+      MNL: 'Manila, PH',
+      CEB: 'Cebu City, PH',
+      DVO: 'Davao City, PH',
+      CGY: 'Cagayan De Oro, PH',
+      SIN: 'Singapore',
+      HKG: 'Hong Kong',
+      NRT: 'Tokyo',
+      KIX: 'Osaka',
+      ICN: 'Seoul',
+      LAX: 'Los Angeles',
+      SJC: 'San Jose',
+      SEA: 'Seattle',
+      ORD: 'Chicago',
+      EWR: 'Newark',
+      AMS: 'Amsterdam',
+      LHR: 'London',
+      FRA: 'Frankfurt',
+      CDG: 'Paris'
+    };
+
+    const PH_SERVERS = 'Cagayan De Oro, PH | Davao City, PH | Cebu City, PH';
+
+    async function detectServer() {
+      try {
+        const res = await fetch('https://cloudflare.com/cdn-cgi/trace', { cache: 'no-store' });
+        const text = await res.text();
+        const colo = (text.match(/colo=([A-Z0-9]+)/) || [])[1];
+        const loc = (text.match(/loc=([A-Z]+)/) || [])[1];
+        if (colo && COLO_MAP[colo]) {
+          return { label: COLO_MAP[colo], colo, loc };
+        }
+        if (colo) {
+          return { label: colo + (loc ? ', ' + loc : ''), colo, loc };
+        }
+      } catch (e) {}
+      return { label: 'Cloudflare', colo: null, loc: null };
+    }
+
     function shortIsp(name) {
       if (!name) return 'Unknown';
       const n = name.toLowerCase();
@@ -336,6 +377,9 @@
     const downloadEl = document.getElementById('download');
     const uploadEl = document.getElementById('upload');
     const jitterEl = document.getElementById('jitter');
+    const serverEl = document.getElementById('server');
+    const serversLine = document.getElementById('serversLine');
+    const serversList = document.getElementById('serversList');
     const progressWrap = document.getElementById('progressWrap');
     const progressBar = document.getElementById('progressBar');
     const liveSpeed = document.getElementById('liveSpeed');
@@ -357,7 +401,7 @@
       progressWrap.classList.toggle('active', v);
       liveSpeed.classList.toggle('active', v);
       liveLabel.classList.toggle('active', v);
-      if (v) { canDo.classList.remove('show'); canDoLoading.classList.remove('show'); if (shareBtn) shareBtn.style.display = 'none'; if (tipsBox) tipsBox.classList.remove('show'); }
+      if (v) { canDo.classList.remove('show'); canDoLoading.classList.remove('show'); if (shareBtn) shareBtn.style.display = 'none'; if (tipsBox) tipsBox.classList.remove('show'); if (serversLine) serversLine.style.display = 'none'; if (serverEl) serverEl.textContent = 'Cloudflare'; }
     }
     function updateProgress(p) { progressBar.style.width = Math.min(100, p) + '%'; }
     function setLive(s) { liveSpeed.textContent = s.toFixed(1); }
@@ -556,6 +600,17 @@
           ping: r.ping != null ? Math.round(r.ping) : '—',
           time: Date.now()
         });
+        // Show PH servers + detected edge
+        try {
+          const info = await detectServer();
+          if (serverEl) serverEl.textContent = info.label;
+          if (serversList) serversList.textContent = PH_SERVERS;
+          if (serversLine) serversLine.style.display = 'block';
+        } catch (e) {
+          if (serverEl) serverEl.textContent = 'Cloudflare';
+          if (serversList) serversList.textContent = PH_SERVERS;
+          if (serversLine) serversLine.style.display = 'block';
+        }
       } catch(err) {
         statusEl.textContent = t('error');
       } finally {
