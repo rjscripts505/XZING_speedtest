@@ -1,17 +1,17 @@
 :root {
-      --bg: #05050a;
-      --card: rgba(18, 18, 28, 0.9);
-      --accent: #7c3aed;
-      --accent2: #06b6d4;
-      --accent-glow: rgba(124, 58, 237, 0.4);
-      --text: #f8fafc;
+      --bg: #030308;
+      --card: rgba(14, 14, 24, 0.78);
+      --accent: #8b5cf6;
+      --accent2: #22d3ee;
+      --accent-glow: rgba(139, 92, 246, 0.55);
+      --text: #f1f5f9;
       --muted: #94a3b8;
-      --border: rgba(255, 255, 255, 0.08);
-      --ping: #f59e0b;
-      --download: #06b6d4;
-      --upload: #8b5cf6;
-      --particle: rgba(167, 139, 250, 0.7);
-      --line: rgba(124, 58, 237, 0.25);
+      --border: rgba(167, 139, 250, 0.12);
+      --ping: #fbbf24;
+      --download: #22d3ee;
+      --upload: #a78bfa;
+      --particle: rgba(167, 139, 250, 0.75);
+      --line: rgba(139, 92, 246, 0.28);
     }
     [data-theme="light"] {
       --bg: #f1f5f9;
@@ -39,10 +39,24 @@
       align-items: center;
       justify-content: center;
       padding: 24px;
-  padding-top: 70px;
+      padding-top: 70px;
       overflow-x: hidden;
       position: relative;
       transition: background 0.35s, color 0.35s;
+    }
+    /* Dark mode ambient glow */
+    body:not([data-theme="light"]),
+    html:not([data-theme="light"]) body {
+      background-color: #030308;
+      background-image:
+        radial-gradient(ellipse 90% 55% at 50% -25%, rgba(139, 92, 246, 0.28), transparent 55%),
+        radial-gradient(ellipse 50% 40% at 100% 80%, rgba(34, 211, 238, 0.1), transparent 50%),
+        radial-gradient(ellipse 45% 35% at 0% 70%, rgba(167, 139, 250, 0.1), transparent 50%),
+        radial-gradient(ellipse 30% 25% at 70% 40%, rgba(124, 58, 237, 0.08), transparent 45%);
+      background-attachment: fixed;
+    }
+    html[data-theme="light"] body {
+      background-image: none;
     }
     #networkCanvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
     .top-bar {
@@ -112,7 +126,7 @@
       background: linear-gradient(135deg, var(--accent), var(--accent2));
       display: flex; align-items: center; justify-content: center;
       font-weight: 800; font-size: 1.3rem; color: white;
-      box-shadow: 0 0 30px var(--accent-glow); letter-spacing: -1px;
+      box-shadow: 0 0 28px var(--accent-glow), 0 0 60px rgba(139, 92, 246, 0.2); letter-spacing: -1px;
     }
     h1 {
       font-size: 1.9rem; font-weight: 800; letter-spacing: -0.03em;
@@ -135,10 +149,19 @@
     .net-info strong { color: var(--text); font-weight: 600; }
     .card {
       background: var(--card); border: 1px solid var(--border); border-radius: 24px;
-      padding: 32px 28px; backdrop-filter: blur(16px);
-      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05);
+      padding: 32px 28px;
+      backdrop-filter: blur(22px) saturate(1.2);
+      -webkit-backdrop-filter: blur(22px) saturate(1.2);
+      box-shadow:
+        0 25px 50px -12px rgba(0,0,0,0.65),
+        0 0 0 1px rgba(139, 92, 246, 0.06),
+        inset 0 1px 0 rgba(255,255,255,0.07);
+      transition: background 0.35s, border-color 0.35s, box-shadow 0.35s;
     }
-    [data-theme="light"] .card { box-shadow: 0 25px 50px -12px rgba(0,0,0,0.1); }
+    [data-theme="light"] .card {
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.1);
+      backdrop-filter: blur(16px);
+    }
     .progress-wrap {
       height: 8px; background: rgba(128,128,128,0.12); border-radius: 20px;
       margin-bottom: 28px; overflow: hidden; display: none;
