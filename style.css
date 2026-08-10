@@ -457,3 +457,68 @@
   color: var(--text);
   font-weight: 500;
 }
+
+
+/* Quality score + PH compare */
+.quality-box {
+  margin-top: 16px;
+  padding: 16px;
+  border-radius: 16px;
+  background: rgba(124, 58, 237, 0.08);
+  border: 1px solid rgba(124, 58, 237, 0.25);
+  text-align: center;
+}
+.quality-score-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+.quality-ring {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--text);
+  background: conic-gradient(var(--accent) var(--qdeg, 0%), rgba(128,128,128,0.15) 0);
+  position: relative;
+  box-shadow: 0 0 20px rgba(124, 58, 237, 0.25);
+}
+.quality-ring::before {
+  content: '';
+  position: absolute;
+  inset: 6px;
+  border-radius: 50%;
+  background: var(--card);
+}
+.quality-ring span {
+  position: relative;
+  z-index: 1;
+}
+.quality-meta { text-align: left; }
+.quality-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.quality-grade {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text);
+}
+.compare-line {
+  font-size: 0.85rem;
+  color: var(--muted);
+  line-height: 1.4;
+  padding-top: 4px;
+  border-top: 1px solid var(--border);
+}
+.compare-line strong { color: var(--text); }

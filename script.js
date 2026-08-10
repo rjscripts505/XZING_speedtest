@@ -28,7 +28,16 @@
         tip1: 'Move closer to your router',
         tip2: 'Pause downloads / streaming on other devices',
         tip3: 'Use 5GHz WiFi if available',
-        tip4: 'Restart your router'
+        tip4: 'Restart your router',
+        quality: 'Quality Score',
+        gradeA: 'Excellent',
+        gradeB: 'Good',
+        gradeC: 'Fair',
+        gradeD: 'Poor',
+        compareFaster: 'Faster than ~{n}% of PH users',
+        compareSlower: 'Below typical PH home WiFi',
+        compareAvg: 'Around typical PH home WiFi',
+        again: 'Test Again'
       },
       fil: {
         subtitle: 'Mabilis • Tumpak • Libreng Internet Speed Test',
@@ -58,7 +67,16 @@
         tip1: 'Lumapit sa router',
         tip2: 'I-pause ang downloads sa ibang device',
         tip3: 'Gamitin ang 5GHz WiFi kung meron',
-        tip4: 'I-restart ang router'
+        tip4: 'I-restart ang router',
+        quality: 'Quality Score',
+        gradeA: 'Excellent',
+        gradeB: 'Good',
+        gradeC: 'Fair',
+        gradeD: 'Poor',
+        compareFaster: 'Mas mabilis kaysa ~{n}% ng users sa PH',
+        compareSlower: 'Mas mababa sa typical PH home WiFi',
+        compareAvg: 'Katulad ng typical PH home WiFi',
+        again: 'Test Ulit'
       }
     };
 
@@ -380,6 +398,11 @@
     const serverEl = document.getElementById('server');
     const serversLine = document.getElementById('serversLine');
     const serversList = document.getElementById('serversList');
+    const qualityBox = document.getElementById('qualityBox');
+    const qualityScore = document.getElementById('qualityScore');
+    const qualityGrade = document.getElementById('qualityGrade');
+    const qualityRing = document.getElementById('qualityRing');
+    const compareLine = document.getElementById('compareLine');
     const progressWrap = document.getElementById('progressWrap');
     const progressBar = document.getElementById('progressBar');
     const liveSpeed = document.getElementById('liveSpeed');
@@ -401,7 +424,7 @@
       progressWrap.classList.toggle('active', v);
       liveSpeed.classList.toggle('active', v);
       liveLabel.classList.toggle('active', v);
-      if (v) { canDo.classList.remove('show'); canDoLoading.classList.remove('show'); if (shareBtn) shareBtn.style.display = 'none'; if (tipsBox) tipsBox.classList.remove('show'); if (serversLine) serversLine.style.display = 'none'; if (serverEl) serverEl.textContent = 'Cloudflare'; }
+      if (v) { canDo.classList.remove('show'); canDoLoading.classList.remove('show'); if (shareBtn) shareBtn.style.display = 'none'; if (tipsBox) tipsBox.classList.remove('show'); if (serversLine) serversLine.style.display = 'none'; if (serverEl) serverEl.textContent = 'Cloudflare'; if (qualityBox) qualityBox.style.display = 'none'; }
     }
     function updateProgress(p) { progressBar.style.width = Math.min(100, p) + '%'; }
     function setLive(s) { liveSpeed.textContent = s.toFixed(1); }
@@ -520,6 +543,65 @@
       };
     }
 
+
+    function calcQuality(dl, ul, ping, jitter) {
+      // Weighted 0-100 score
+      let score = 0;
+      // Download (40%)
+      if (dl >= 200) score += 40;
+      else if (dl >= 100) score += 34;
+      else if (dl >= 50) score += 26;
+      else if (dl >= 25) score += 18;
+      else if (dl >= 10) score += 10;
+      else score += Math.max(0, dl);
+      // Upload (20%)
+      if (ul >= 50) score += 20;
+      else if (ul >= 20) score += 15;
+      else if (ul >= 10) score += 10;
+      else if (ul >= 5) score += 6;
+      else score += Math.max(0, ul * 0.8);
+      // Ping (25%)
+      if (ping == null) score += 12;
+      else if (ping <= 20) score += 25;
+      else if (ping <= 40) score += 20;
+      else if (ping <= 60) score += 15;
+      else if (ping <= 100) score += 8;
+      else score += 3;
+      // Jitter (15%)
+      if (jitter == null) score += 8;
+      else if (jitter <= 5) score += 15;
+      else if (jitter <= 15) score += 11;
+      else if (jitter <= 30) score += 7;
+      else score += 3;
+      return Math.max(0, Math.min(100, Math.round(score)));
+    }
+
+    function gradeFromScore(s) {
+      if (s >= 85) return t('gradeA');
+      if (s >= 70) return t('gradeB');
+      if (s >= 50) return t('gradeC');
+      return t('gradeD');
+    }
+
+    function phCompareText(dl) {
+      // Rough PH fixed broadband context (illustrative, not live stats)
+      if (dl >= 150) return t('compareFaster').replace('{n}', '80');
+      if (dl >= 80) return t('compareFaster').replace('{n}', '60');
+      if (dl >= 40) return t('compareFaster').replace('{n}', '40');
+      if (dl >= 20) return t('compareAvg');
+      return t('compareSlower');
+    }
+
+    function showQuality(dl, ul, ping, jitter) {
+      if (!qualityBox) return;
+      const score = calcQuality(dl, ul, ping, jitter);
+      qualityScore.textContent = score;
+      qualityGrade.textContent = gradeFromScore(score);
+      if (qualityRing) qualityRing.style.setProperty('--qdeg', (score * 3.6) + '%');
+      if (compareLine) compareLine.innerHTML = phCompareText(dl);
+      qualityBox.style.display = 'block';
+    }
+
     function showCanDo(downloadMbps, uploadMbps, ping) {
       lastResults = { dl: downloadMbps, ul: uploadMbps, ping };
       canDo.classList.remove('show');
@@ -611,6 +693,10 @@
           if (serversList) serversList.textContent = PH_SERVERS;
           if (serversLine) serversLine.style.display = 'block';
         }
+        showQuality(dl, ul, r.ping, r.jitter);
+        // Button -> Test Again
+        const btnText = startBtn.querySelector('.btn-text');
+        if (btnText) btnText.textContent = t('again');
       } catch(err) {
         statusEl.textContent = t('error');
       } finally {
