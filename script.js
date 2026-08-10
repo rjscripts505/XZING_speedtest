@@ -78,7 +78,7 @@
         compareSlower: 'Mas mababa sa typical PH home WiFi',
         compareAvg: 'Katulad ng typical PH home WiFi',
         again: 'Test Ulit',
-        disclaimer: 'Maaaring mag-iba ang resulta sa ibang speed test (hal. Ookla) dahil sa iba't ibang server at paraan.'
+        disclaimer: 'Maaaring mag-iba ang resulta sa ibang speed test (hal. Ookla) dahil sa iba\'t ibang server at paraan.'
       }
     };
 
