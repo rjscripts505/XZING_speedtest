@@ -196,6 +196,19 @@
 
     const langLoading = document.getElementById('langLoading');
 
+    function hideLangLoading() {
+      if (langLoading) langLoading.classList.remove('show');
+    }
+    if (langLoading) {
+      langLoading.addEventListener('click', hideLangLoading);
+    }
+    // Safety: never leave overlay stuck
+    setInterval(() => {
+      if (langLoading && langLoading.classList.contains('show')) {
+        /* checked in click handler timeouts */
+      }
+    }, 5000);
+
     document.querySelectorAll('.lang-grid button').forEach(btn => {
       btn.onclick = () => {
         if (btn.dataset.lang === currentLang) {
@@ -203,17 +216,23 @@
           return;
         }
         langMenu.classList.remove('open');
-        langLoading.classList.add('show');
+        if (langLoading) langLoading.classList.add('show');
 
         setTimeout(() => {
-          currentLang = btn.dataset.lang;
-          localStorage.setItem('lang', currentLang);
-          langCurrent.textContent = btn.dataset.name;
-          document.querySelectorAll('.lang-grid button').forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-          applyLang();
-          langLoading.classList.remove('show');
+          try {
+            currentLang = btn.dataset.lang;
+            localStorage.setItem('lang', currentLang);
+            langCurrent.textContent = btn.dataset.name;
+            document.querySelectorAll('.lang-grid button').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            applyLang();
+          } catch (e) {
+            console.error(e);
+          }
+          hideLangLoading();
         }, 450);
+        // Hard safety hide
+        setTimeout(hideLangLoading, 2000);
       };
     });
 
@@ -265,6 +284,7 @@
     }
 
     function draw() {
+      try {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       const colors = getColors();
       for (const p of particles) {
@@ -296,6 +316,10 @@
         ctx.fill();
       }
       requestAnimationFrame(draw);
+      } catch (e) {
+        console.error(e);
+        requestAnimationFrame(draw);
+      }
     }
     draw();
 
