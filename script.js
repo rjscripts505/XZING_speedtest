@@ -325,15 +325,41 @@
 
     // Theme
     const themeBtn = document.getElementById('themeBtn');
-    const saved = localStorage.getItem('theme') || 'dark';
-    document.documentElement.setAttribute('data-theme', saved);
-    themeBtn.textContent = saved === 'dark' ? '☀️' : '🌙';
-    themeBtn.onclick = () => {
-      const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-      document.documentElement.setAttribute('data-theme', next);
-      localStorage.setItem('theme', next);
-      themeBtn.textContent = next === 'dark' ? '☀️' : '🌙';
-    };
+
+    function systemTheme() {
+      return window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches
+        ? 'light'
+        : 'dark';
+    }
+
+    function applyTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      if (themeBtn) themeBtn.textContent = theme === 'dark' ? '☀️' : '🌙';
+    }
+
+    // Use saved choice, or fall back to system preference
+    const savedTheme = localStorage.getItem('theme');
+    applyTheme(savedTheme || systemTheme());
+
+    if (themeBtn) {
+      themeBtn.onclick = () => {
+        const current = document.documentElement.getAttribute('data-theme') || 'dark';
+        const next = current === 'dark' ? 'light' : 'dark';
+        applyTheme(next);
+        localStorage.setItem('theme', next); // user choice overrides system
+      };
+    }
+
+    // If user never picked a theme, follow OS changes live
+    if (!savedTheme && window.matchMedia) {
+      try {
+        window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', (e) => {
+          if (!localStorage.getItem('theme')) {
+            applyTheme(e.matches ? 'light' : 'dark');
+          }
+        });
+      } catch (err) {}
+    }
 
     
     // Cloudflare colo -> city (common ones + PH region)
