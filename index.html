@@ -28,7 +28,7 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%237c3aed'/><text x='50' y='68' font-size='52' font-weight='800' font-family='Arial' text-anchor='middle' fill='white'>XZ</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=20260811light">
+  <link rel="stylesheet" href="style.css?v=20260818">
 </head>
 <body>
   <canvas id="networkCanvas"></canvas>
@@ -106,46 +106,54 @@
         </div>
       </div>
 
-      <div class="servers-line" id="serversLine" style="display:none">
-        <span class="servers-label">Server(s)</span>
-        <span id="serversList">Cagayan De Oro, PH · Davao City, PH · Cebu City, PH</span>
-      </div>
-
-      <div class="quality-box" id="qualityBox" style="display:none">
-        <div class="quality-score-wrap">
-          <div class="quality-ring" id="qualityRing">
-            <span id="qualityScore">—</span>
-          </div>
-          <div class="quality-meta">
-            <div class="quality-label" data-i18n="quality">Quality Score</div>
-            <div class="quality-grade" id="qualityGrade">—</div>
-          </div>
-        </div>
-        <div class="compare-line" id="compareLine"></div>
-      </div>
-
       <div id="status" data-i18n="ready">Ready when you are</div>
+
+      <div class="last-test" id="lastTest" style="display:none">
+        <span data-i18n="lastTest">Last test</span>:
+        <strong id="lastTestValue">—</strong>
+      </div>
 
       <button class="btn" id="startBtn">
         <span class="spinner"></span>
         <span class="btn-text" data-i18n="start">Start Speed Test</span>
       </button>
 
-      <div class="can-do-loading" id="canDoLoading">
-        <div class="can-do-loading-text" data-i18n="analyzing">Analyzing your speed...</div>
-        <div class="can-do-dots"><span></span><span></span><span></span></div>
+      <!-- Grouped results after test -->
+      <div class="results-panel" id="resultsPanel" style="display:none">
+        <div class="servers-line" id="serversLine">
+          <span class="servers-label">Server(s)</span>
+          <span id="serversList">Cagayan De Oro, PH · Davao City, PH · Cebu City, PH</span>
+        </div>
+
+        <div class="quality-box" id="qualityBox">
+          <div class="quality-score-wrap">
+            <div class="quality-ring" id="qualityRing">
+              <span id="qualityScore">—</span>
+            </div>
+            <div class="quality-meta">
+              <div class="quality-label" data-i18n="quality">Quality Score</div>
+              <div class="quality-grade" id="qualityGrade">—</div>
+            </div>
+          </div>
+          <div class="compare-line" id="compareLine"></div>
+        </div>
+
+        <div class="can-do-loading" id="canDoLoading">
+          <div class="can-do-loading-text" data-i18n="analyzing">Analyzing your speed...</div>
+          <div class="can-do-dots"><span></span><span></span><span></span></div>
+        </div>
+
+        <div class="can-do" id="canDo">
+          <div class="can-do-title" data-i18n="cando">What can you do with this speed?</div>
+          <div class="can-do-list" id="canDoList"></div>
+        </div>
+
+        <div class="tips-box" id="tipsBox"></div>
+
+        <button class="share-btn" id="shareBtn">
+          <span data-i18n="share">Share Results</span>
+        </button>
       </div>
-
-      <div class="can-do" id="canDo">
-        <div class="can-do-title" data-i18n="cando">What can you do with this speed?</div>
-        <div class="can-do-list" id="canDoList"></div>
-      </div>
-
-      <div class="tips-box" id="tipsBox"></div>
-
-      <button class="share-btn" id="shareBtn" style="display:none">
-        <span data-i18n="share">Share Results</span>
-      </button>
 
       <div class="history-wrap" id="historyWrap" style="display:none">
         <button type="button" class="history-toggle" id="historyToggle">
@@ -161,6 +169,9 @@
     <p class="disclaimer" data-i18n="disclaimer">
       Results may vary from other speed tests (e.g. Ookla) due to different servers and methods.
     </p>
+    <p class="privacy" data-i18n="privacy">
+      XZING is free. We don't store your IP or results on a server. History stays only on your device.
+    </p>
     <p class="footer">
       Made by <a href="https://github.com/rjscripts505" target="_blank">XZING</a> · Powered by Cloudflare
     </p>
@@ -170,6 +181,6 @@
     <div class="lang-loading-text">Loading...</div>
     <div class="lang-loading-dots"><span></span><span></span><span></span></div>
   </div>
-  <script src="script.js?v=20260811light"></script>
+  <script src="script.js?v=20260818"></script>
 </body>
 </html>

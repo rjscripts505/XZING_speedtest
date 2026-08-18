@@ -38,7 +38,9 @@
         compareSlower: 'Below typical PH home WiFi',
         compareAvg: 'Around typical PH home WiFi',
         again: 'Test Again',
-        disclaimer: 'Results may vary from other speed tests (e.g. Ookla) due to different servers and methods.'
+        disclaimer: 'Results may vary from other speed tests (e.g. Ookla) due to different servers and methods.',
+        privacy: "XZING is free. We don't store your IP or results on a server. History stays only on your device.",
+        lastTest: 'Last test'
       },
       fil: {
         subtitle: 'Mabilis • Tumpak • Libreng Internet Speed Test',
@@ -78,7 +80,9 @@
         compareSlower: 'Mas mababa sa typical PH home WiFi',
         compareAvg: 'Katulad ng typical PH home WiFi',
         again: 'Test Ulit',
-        disclaimer: 'Maaaring mag-iba ang resulta sa ibang speed test (hal. Ookla) dahil sa iba\'t ibang server at paraan.'
+        disclaimer: 'Maaaring mag-iba ang resulta sa ibang speed test (hal. Ookla) dahil sa iba\'t ibang server at paraan.',
+        privacy: 'Libre ang XZING. Hindi namin sine-save ang IP o resulta sa server. Ang history ay nasa device mo lang.',
+        lastTest: 'Huling test'
       }
     };
 
@@ -451,6 +455,9 @@
     const serversLine = document.getElementById('serversLine');
     const serversList = document.getElementById('serversList');
     const qualityBox = document.getElementById('qualityBox');
+    const resultsPanel = document.getElementById('resultsPanel');
+    const lastTestEl = document.getElementById('lastTest');
+    const lastTestValue = document.getElementById('lastTestValue');
     const qualityScore = document.getElementById('qualityScore');
     const qualityGrade = document.getElementById('qualityGrade');
     const qualityRing = document.getElementById('qualityRing');
@@ -476,7 +483,7 @@
       progressWrap.classList.toggle('active', v);
       liveSpeed.classList.toggle('active', v);
       liveLabel.classList.toggle('active', v);
-      if (v) { canDo.classList.remove('show'); canDoLoading.classList.remove('show'); if (shareBtn) shareBtn.style.display = 'none'; if (tipsBox) tipsBox.classList.remove('show'); if (serversLine) serversLine.style.display = 'none'; if (serverEl) serverEl.textContent = 'Cloudflare'; if (qualityBox) qualityBox.style.display = 'none'; }
+      if (v) { canDo.classList.remove('show'); canDoLoading.classList.remove('show'); if (tipsBox) tipsBox.classList.remove('show'); if (serverEl) serverEl.textContent = 'Cloudflare'; if (resultsPanel) resultsPanel.style.display = 'none'; }
     }
     function updateProgress(p) { progressBar.style.width = Math.min(100, p) + '%'; }
     function setLive(s) { liveSpeed.textContent = s.toFixed(1); }
@@ -576,7 +583,6 @@
     }
 
     function setupShare(dl, ul, ping, jitter) {
-      shareBtn.style.display = 'inline-flex';
       shareBtn.onclick = () => {
         const text = 'XZING Speed Test Results\n' +
           'Ping: ' + Math.round(ping || 0) + ' ms\n' +
@@ -651,7 +657,20 @@
       qualityGrade.textContent = gradeFromScore(score);
       if (qualityRing) qualityRing.style.setProperty('--qdeg', (score * 3.6) + '%');
       if (compareLine) compareLine.innerHTML = phCompareText(dl);
-      qualityBox.style.display = 'block';
+    }
+
+    function showLastTestSummary() {
+      if (!lastTestEl || !lastTestValue) return;
+      const list = loadHistory();
+      if (!list.length) {
+        lastTestEl.style.display = 'none';
+        return;
+      }
+      const item = list[0];
+      const d = new Date(item.time);
+      const when = d.toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+      lastTestValue.textContent = item.dl + ' Mbps · ' + when;
+      lastTestEl.style.display = 'block';
     }
 
     function showCanDo(downloadMbps, uploadMbps, ping) {
@@ -739,13 +758,13 @@
           const info = await detectServer();
           if (serverEl) serverEl.textContent = info.label;
           if (serversList) serversList.textContent = PH_SERVERS;
-          if (serversLine) serversLine.style.display = 'block';
         } catch (e) {
           if (serverEl) serverEl.textContent = 'Cloudflare';
           if (serversList) serversList.textContent = PH_SERVERS;
-          if (serversLine) serversLine.style.display = 'block';
         }
         showQuality(dl, ul, r.ping, r.jitter);
+        if (resultsPanel) resultsPanel.style.display = 'block';
+        showLastTestSummary();
         // Button -> Test Again
         const btnText = startBtn.querySelector('.btn-text');
         if (btnText) btnText.textContent = t('again');
@@ -764,3 +783,4 @@
     }
 
     renderHistory();
+    showLastTestSummary();

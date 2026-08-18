@@ -596,3 +596,48 @@ html[data-theme="light"] .history-toggle {
 html[data-theme="light"] .logo {
   box-shadow: 0 4px 20px rgba(124, 58, 237, 0.35);
 }
+
+
+/* Last test summary */
+.last-test {
+  margin: 0 0 14px;
+  font-size: 0.82rem;
+  color: var(--muted);
+  text-align: center;
+}
+.last-test strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* Grouped results panel */
+.results-panel {
+  margin-top: 18px;
+  padding-top: 6px;
+  border-top: 1px solid var(--border);
+  animation: fadeMenu 0.3s ease;
+}
+.results-panel .servers-line {
+  margin-top: 12px;
+}
+.results-panel .quality-box {
+  margin-top: 12px;
+}
+.results-panel .share-btn {
+  margin-top: 14px;
+  display: inline-flex;
+  justify-content: center;
+}
+
+/* Privacy note */
+.privacy {
+  margin-top: 10px;
+  max-width: 420px;
+  margin-left: auto;
+  margin-right: auto;
+  font-size: 0.72rem;
+  color: var(--muted);
+  line-height: 1.45;
+  text-align: center;
+  opacity: 0.95;
+}
