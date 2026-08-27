@@ -416,6 +416,10 @@
       if (n.includes('dito')) return 'DITO';
       if (n.includes('sky')) return 'Sky Fiber';
       if (n.includes('radius')) return 'Radius';
+      if (n.includes('starlink') || n.includes('spacex')) return 'Starlink';
+      if (n.includes('eastern')) return 'Eastern';
+      if (n.includes('now telecom') || n.includes('nowcorp')) return 'Now Telecom';
+      if (n.includes('fiberx')) return 'FiberX';
       if (name.length > 28) return name.split(/[ ,]+/).slice(0, 2).join(' ');
       return name;
     }
