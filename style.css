@@ -369,15 +369,46 @@ h1 {
 .lang-loading-text { color: #94a3b8; font-size: 0.9rem; font-weight: 500; }
 .lang-loading-dots { display: flex; gap: 8px; }
 .footer-notes {
-  margin-top: 22px; max-width: 380px; margin-left: auto; margin-right: auto; text-align: center;
+  margin-top: 16px;
+  max-width: 320px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  padding: 0 8px;
 }
 .disclaimer, .privacy {
-  margin: 0; font-size: 0.7rem; color: var(--muted); line-height: 1.5; opacity: 0.75;
+  margin: 0;
+  font-size: 0.65rem;
+  color: var(--muted);
+  line-height: 1.4;
+  opacity: 0.65;
 }
-.privacy { margin-top: 6px; }
-.footer { margin-top: 14px; font-size: 0.78rem; color: var(--muted); opacity: 0.9; }
+.privacy { margin-top: 4px; }
+.footer {
+  margin-top: 10px;
+  margin-bottom: 8px;
+  font-size: 0.75rem;
+  color: var(--muted);
+  opacity: 0.85;
+}
 .footer a { color: #a78bfa; text-decoration: none; font-weight: 600; }
 .footer a:hover { text-decoration: underline; }
+
+@media (max-width: 600px) {
+  .footer-notes {
+    max-width: 92%;
+    margin-top: 14px;
+    padding: 0 12px;
+  }
+  .disclaimer, .privacy {
+    font-size: 0.62rem;
+    line-height: 1.35;
+  }
+  .footer {
+    font-size: 0.72rem;
+    margin-top: 8px;
+  }
+}
 html[data-theme="light"] .metric {
   background: rgba(255, 255, 255, 0.9); border-color: rgba(0, 0, 0, 0.08);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);

@@ -38,8 +38,8 @@
         compareSlower: 'Below typical PH home WiFi',
         compareAvg: 'Around typical PH home WiFi',
         again: 'Test Again',
-        disclaimer: 'Results may vary from other speed tests (e.g. Ookla) due to different servers and methods.',
-        privacy: "XZING is free. We don't store your IP or results on a server. History stays only on your device.",
+        disclaimer: 'Results may vary from other speed tests (e.g. Ookla).',
+        privacy: "Free speed test. History stays on your device only — we don't store your data.",
         lastTest: 'Last test'
       },
       fil: {
@@ -80,8 +80,8 @@
         compareSlower: 'Mas mababa sa typical PH home WiFi',
         compareAvg: 'Katulad ng typical PH home WiFi',
         again: 'Test Ulit',
-        disclaimer: 'Maaaring mag-iba ang resulta sa ibang speed test (hal. Ookla) dahil sa iba\'t ibang server at paraan.',
-        privacy: 'Libre ang XZING. Hindi namin sine-save ang IP o resulta sa server. Ang history ay nasa device mo lang.',
+        disclaimer: 'Maaaring mag-iba ang resulta sa ibang speed test (hal. Ookla).',
+        privacy: 'Libreng speed test. Nasa device mo lang ang history — hindi namin sine-save ang data mo.',
         lastTest: 'Huling test'
       }
     };
